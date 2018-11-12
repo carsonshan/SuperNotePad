@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <!--侧滑View-->
+    <com.fairhand.supernotepad.view.SlideDragView
+        android:id="@+id/slide_drag_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--mLeftView-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorItem">
+
+                <TextView
+                    android:id="@+id/tv_user_account"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/iv_user"
+                    android:drawablePadding="6dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:text="18151692806" />
+
+                <ImageView
+                    android:id="@+id/iv_exit_app"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/iv_exit" />
+
+            </LinearLayout>
+
+            <GridView
+                android:id="@+id/grid_view_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="32dp"
+                android:gravity="center"
+                android:horizontalSpacing="12dp"
+                android:numColumns="2"
+                android:scrollbars="none"
+                android:verticalSpacing="12dp" />
+
+            <!--分割线-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.64dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:background="#716e77" />
+
+            <com.fairhand.supernotepad.view.ItemView
+                android:id="@+id/iv_all_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                app:left_icon="@drawable/iv_all_note"
+                app:left_text="所有记事"
+                app:right_text="32"
+                app:show_left_icon="true"
+                app:show_right_arrow="false" />
+
+            <com.fairhand.supernotepad.view.ItemView
+                android:id="@+id/iv_note_pad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                app:left_icon="@drawable/iv_note_pad"
+                app:left_text="记事本"
+                app:right_text="2"
+                app:show_left_icon="true"
+                app:show_right_arrow="false" />
+
+            <com.fairhand.supernotepad.view.ItemView
+                android:id="@+id/iv_note_kind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
+                app:left_icon="@drawable/iv_note_kind"
+                app:left_text="记事类型"
+                app:right_text="7"
+                app:show_left_icon="true"
+                app:show_right_arrow="false" />
+
+        </LinearLayout>
+
+        <!--mMainView-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EEEEEE"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorItem">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:entries="@array/type"
+                    android:spinnerMode="dropdown" />
+
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/iv_search" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_search_result_non"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/search_result_non"
+                android:textColor="@color/colorItem"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <GridView
+                android:id="@+id/grid_view_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:horizontalSpacing="24dp"
+                android:numColumns="3"
+                android:scrollbars="none"
+                android:verticalSpacing="24dp" />
+
+        </LinearLayout>
+
+    </com.fairhand.supernotepad.view.SlideDragView>
+
+</LinearLayout>

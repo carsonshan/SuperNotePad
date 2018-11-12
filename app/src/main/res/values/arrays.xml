@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="type">
+        <item>所有记事</item>
+        <item>普通记事</item>
+        <item>手绘记事</item>
+        <item>照片记事</item>
+        <item>拍摄记事</item>
+        <item>录音记事</item>
+    </string-array>
+</resources>

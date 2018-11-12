@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--个人中心选项卡-->
+    <declare-styleable name="ItemView">
+        <!--设置左侧图标-->
+        <attr name="left_icon" format="reference" />
+        <!--是否显示左侧图标-->
+        <attr name="show_left_icon" format="boolean" />
+        <!--左侧标题文字-->
+        <attr name="left_text" format="string" />
+        <!--右侧描述文字-->
+        <attr name="right_text" format="string" />
+        <!--是否显示右侧小箭头-->
+        <attr name="show_right_arrow" format="boolean" />
+        <!--是否显示下划线-->
+        <attr name="show_divide_line" format="boolean" />
+    </declare-styleable>
+</resources>

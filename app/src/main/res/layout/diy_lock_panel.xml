@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_psd_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/tip_password"
+        android:textColor="@color/colorItem"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.fairhand.supernotepad.view.SinglePasswordView
+        android:id="@+id/spv_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/spv_2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_psd_tip" />
+
+    <com.fairhand.supernotepad.view.SinglePasswordView
+        android:id="@+id/spv_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/spv_3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spv_1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_psd_tip" />
+
+    <com.fairhand.supernotepad.view.SinglePasswordView
+        android:id="@+id/spv_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/spv_4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spv_2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_psd_tip" />
+
+    <com.fairhand.supernotepad.view.SinglePasswordView
+        android:id="@+id/spv_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spv_3"
+        app:layout_constraintTop_toBottomOf="@+id/tv_psd_tip" />
+
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        app:columnCount="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spv_2"
+        app:rowCount="4">
+
+        <TextView
+            android:id="@+id/tv_1"
+            style="@style/DiyTextView"
+            android:text="@string/n_1" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            style="@style/DiyTextView"
+            android:text="@string/n_2" />
+
+        <TextView
+            android:id="@+id/tv_3"
+            style="@style/DiyTextView"
+            android:text="@string/n_3" />
+
+        <TextView
+            android:id="@+id/tv_4"
+            style="@style/DiyTextView"
+            android:text="@string/n_4" />
+
+        <TextView
+            android:id="@+id/tv_5"
+            style="@style/DiyTextView"
+            android:text="@string/n_5" />
+
+        <TextView
+            android:id="@+id/tv_6"
+            style="@style/DiyTextView"
+            android:text="@string/n_6" />
+
+        <TextView
+            android:id="@+id/tv_7"
+            style="@style/DiyTextView"
+            android:text="@string/n_7" />
+
+        <TextView
+            android:id="@+id/tv_8"
+            style="@style/DiyTextView"
+            android:text="@string/n_8" />
+
+        <TextView
+            android:id="@+id/tv_9"
+            style="@style/DiyTextView"
+            android:text="@string/n_9" />
+
+        <TextView
+            style="@style/DiyTextView"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_0"
+            style="@style/DiyTextView"
+            android:text="@string/n_0" />
+
+        <TextView
+            android:id="@+id/tv_delete"
+            style="@style/DiyTextView"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:text="@string/delete"
+            android:textColor="#393E46"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+    </android.support.v7.widget.GridLayout>
+
+</android.support.constraint.ConstraintLayout>

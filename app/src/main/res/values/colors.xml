@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#D25565</color>
+    <color name="colorPrimaryDark">#D25565</color>
+    <color name="colorAccent">#D25565</color>
+
+    <color name="colorItem">#D25565</color>
+
+    <color name="colorBottomTool">#EAE3E3</color>
+
+    <color name="colorBlackPen">#000000</color>
+    <color name="colorRedPen">#ED5485</color>
+    <color name="colorBluePen">#50C1E9</color>
+    <color name="colorPurplePen">#A94CAF</color>
+    <color name="colorYellowPen">#F9CE00</color>
+    <color name="colorGreenPen">#57D1C9</color>
+
+    <color name="colorDim">#CCCCCC</color>
+
+</resources>

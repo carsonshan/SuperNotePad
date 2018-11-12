@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fairhand.supernotepad">
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!--suppress DeprecatedClassUsageInspection -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:name=".app.Config"
+        android:allowBackup="true"
+        android:icon="@drawable/splash"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/splash"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
+        <!-- 配置Mob -->
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <!-- 主页 -->
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 登录 -->
+        <activity
+            android:name=".activity.SignInActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 欢迎 -->
+        <activity
+            android:name=".activity.WelcomeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 普通记事 -->
+        <activity
+            android:name=".activity.CommonNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <!-- 手绘记事 -->
+        <activity
+            android:name=".activity.HandPaintNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <!-- 注册 -->
+        <activity
+            android:name=".activity.SignUpActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 闪屏 -->
+        <activity
+            android:name=".activity.SplashActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/DiySplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- 照片记事 -->
+        <activity
+            android:name=".activity.PictureNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <!-- 画廊 -->
+        <activity
+            android:name=".activity.GalleryActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <!-- 展示所有记事类型 -->
+        <activity
+            android:name=".activity.NoteKindActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 录音记事 -->
+        <activity
+            android:name=".recording.view.RecordNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 拍摄记事 -->
+        <activity
+            android:name=".video.view.VideoNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 拼图记事 -->
+        <activity
+            android:name=".activity.PhotoAffixNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 基类Activity封装 -->
+        <activity android:name=".activity.BaseActivity" />
+        <!-- 视频播放界面 -->
+        <activity
+            android:name=".activity.PlayVideoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <!--
+             为调取系统相机
+            authorities：app的包名.fileProvider
+            grantUriPermissions：必须是true，表示授予 URI 临时访问权限
+            exported：必须是false
+            resource：中的@xml/file_paths是要添加的文件
+        -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.fairhand.supernotepad.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <!-- 录音服务类 -->
+        <service android:name=".recording.service.RecordingService" />
+        <!--记事本-->
+        <activity
+            android:name=".activity.NotePadActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!--密码锁-->
+        <activity
+            android:name=".activity.LockActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+    </application>
+
+</manifest>
