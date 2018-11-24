@@ -106,7 +106,7 @@
             android:screenOrientation="portrait" />
         <!-- 拼图记事 -->
         <activity
-            android:name=".activity.PhotoAffixNoteActivity"
+            android:name=".puzzle.affix.PhotoAffixNoteActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <!-- 基类Activity封装 -->
@@ -135,14 +135,26 @@
         </provider>
         <!-- 录音服务类 -->
         <service android:name=".recording.service.RecordingService" />
-        <!--记事本-->
+        <!-- 记事本 -->
         <activity
             android:name=".activity.NotePadActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <!--密码锁-->
+        <!-- 密码锁 -->
         <activity
             android:name=".activity.LockActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <!-- 编辑图片 -->
+        <activity
+            android:name=".puzzle.edit.EditPhotoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreenTheme" />
+        <!--新手引导页-->
+        <activity
+            android:name=".activity.GuideActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme" />

@@ -85,4 +85,16 @@ public class CacheUtil {
         editor.putString("KEY_CURRENT_PAD", value).apply();
     }
     
+    public static boolean getFirstUse(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                "SAVE_FIRST_USE", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("KEY_FIRST_USE", true);
+    }
+    
+    public static void putFirstUse(Context context, boolean value) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(
+                "SAVE_FIRST_USE", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("KEY_FIRST_USE", value).apply();
+    }
+    
 }

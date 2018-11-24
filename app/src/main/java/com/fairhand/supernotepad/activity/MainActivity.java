@@ -1,8 +1,11 @@
 package com.fairhand.supernotepad.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
@@ -25,6 +28,7 @@ import com.fairhand.supernotepad.entity.Card;
 import com.fairhand.supernotepad.entity.Note;
 import com.fairhand.supernotepad.entity.RealmNote;
 import com.fairhand.supernotepad.entity.RealmSecretNote;
+import com.fairhand.supernotepad.puzzle.affix.PhotoAffixNoteActivity;
 import com.fairhand.supernotepad.recording.view.RecordNoteActivity;
 import com.fairhand.supernotepad.util.CacheUtil;
 import com.fairhand.supernotepad.util.Logger;
@@ -32,6 +36,7 @@ import com.fairhand.supernotepad.util.Toaster;
 import com.fairhand.supernotepad.video.view.VideoNoteActivity;
 import com.fairhand.supernotepad.view.DiyCommonDialog;
 import com.fairhand.supernotepad.view.DiyInputDialog;
+import com.fairhand.supernotepad.view.DiyObservePuzzleDialog;
 import com.fairhand.supernotepad.view.ItemView;
 import com.fairhand.supernotepad.view.SlideDragView;
 
@@ -71,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     AppCompatSpinner spinner;
     @BindView(R.id.iv_search)
     ImageView ivSearch;
-    @BindView(R.id.tv_search_result_non)
-    TextView tvSearchResultNon;
+    @BindView(R.id.tv_note_non)
+    TextView tvNoteNon;
     @BindView(R.id.tv_user_account)
     TextView tvUserAccount;
     @BindView(R.id.iv_exit_app)
@@ -91,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      */
     private ArrayList<Note> backupNotes = new ArrayList<>();
     
+    private int locationFromDatabase;
+    
     /**
      * 卡片数据
      */
@@ -107,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         super.onCreate(savedInstanceState);
         smoothSwitchScreen();
         setContentView(R.layout.activity_main);
-        translucentBar(R.color.colorItem);
+        translucentBar();
         ButterKnife.bind(this);
         // 获取Realm实例
         mRealm = Realm.getDefaultInstance();
@@ -143,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     /**
      * 状态栏变色处理
      */
-    public void translucentBar(int color) {
+    public void translucentBar() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // 获取状态栏高度
         int resourceId = getResources().getIdentifier("status_bar_height",
@@ -154,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         LinearLayout.LayoutParams params
                 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight);
         rectView.setLayoutParams(params);
-        rectView.setBackgroundColor(getResources().getColor(color));
+        rectView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorItem));
         // 添加矩形View到布局中
         ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
         decorView.addView(rectView);
@@ -200,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 设置私密数据
      */
     private void setSecretData() {
-        tvSearchResultNon.setVisibility(View.GONE);
+        tvNoteNon.setVisibility(View.GONE);
         adapter = new ShowNoteAdapter(this, Config.notes);
         Logger.d("设置主视图");
         // 查询所有记事记录
@@ -211,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         backupNotes.clear();
         adapter.updateData(Config.notes);
         if (realmNotes.size() > 0) {
-            int locationFromDatabase = 0;
+            locationFromDatabase = 0;
             // 有数据
             for (RealmSecretNote item : realmNotes) {
                 Logger.d("标题------------" + item.getNoteTitle());
@@ -256,9 +263,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 设置主视图的数据
      */
     private void setMainViewData() {
-        tvSearchResultNon.setVisibility(View.GONE);
+        Logger.d("位置", "偷偷设置视图");
+        tvNoteNon.setVisibility(View.GONE);
         adapter = new ShowNoteAdapter(this, Config.notes);
-        Logger.d("设置主视图");
         // 查询所有记事记录
         RealmResults<RealmNote> realmNotes = mRealm.where(RealmNote.class).findAll();
         Logger.d("大小------------" + realmNotes.size());
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         adapter.updateData(Config.notes);
         if (realmNotes.size() > 0) {
             // 有数据
-            int locationFromDataBase = 0;
+            locationFromDatabase = 0;
             for (RealmNote item : realmNotes) {
                 Logger.d("标题------------" + item.getNoteTitle());
                 Note note = new Note();
@@ -279,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 ArrayList<String> data = new ArrayList<>(item.getPictureIds());
                 note.setPictureIds(data);
                 note.setVideoPath(item.getVideoPath());
-                note.setLocationFromDatabase(locationFromDataBase++);
+                note.setLocationFromDatabase(locationFromDatabase++);
                 // 获取类型
                 int key = item.getKey();
                 // 根据类型加载不同图片
@@ -316,7 +323,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         adapter.updateData(Config.notes);
         mGridViewNote.setAdapter(adapter);
         mGridViewNote.setOnItemLongClickListener((parent, view, position, id) -> {
-            Logger.d("长按位置：" + position);
             delete(Config.notes.get(position).getLocationFromDatabase(), position);
             // 返回true消费掉此事件
             return true;
@@ -360,6 +366,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     break;
                 case Config.TYPE_PUZZLE:
                     // 拼图记事
+                    DiyObservePuzzleDialog dialog = new DiyObservePuzzleDialog(this, R.style.DiyDialogStyle);
+                    Bitmap bitmap = BitmapFactory.decodeFile(note.getNoteImagePath());
+                    dialog.setTvContentShow(note.getNoteTitle())
+                            .setIvPhotoShow(bitmap)
+                            .show();
+                    break;
+                case Config.TYPE_AFFAIR:
+                    // 事务记事
                     break;
                 default:
                     break;
@@ -437,6 +451,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * @param position 在GridView的位置
      */
     private void handleDelete(int location, int position) {
+        Logger.d("位置", "数据库中：" + location);
+        Logger.d("位置", "GridView中：" + position);
         if (Config.currentPad.equals(Config.DEFAULT_PAD)) {
             // 先查询数据
             RealmResults<RealmNote> realmNotes = mRealm.where(RealmNote.class).findAll();
@@ -449,10 +465,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             mRealm.executeTransaction(realm -> realmNotes.deleteFromRealm(location));
         }
         // 移除选中item并通知刷新界面
-        backupNotes.remove(location);
+        backupNotes.remove(position);
         Config.notes.remove(position);
         adapter.updateData(Config.notes);
         ivAllNote.setRightText(Config.notes.size() + "");
+        updateLocationFromDatabase();
+    }
+    
+    /**
+     * 更新数据在数据库中的位置
+     */
+    private void updateLocationFromDatabase() {
+        locationFromDatabase = 0;
+        for (Note note : Config.notes) {
+            note.setLocationFromDatabase(locationFromDatabase++);
+        }
     }
     
     /**
@@ -474,14 +501,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         VideoNoteActivity.setCallBack(this);
         LockActivity.setCallBack(this);
         NotePadActivity.setCallBack(this);
+        PhotoAffixNoteActivity.setCallback(this);
         
         // 下拉框选择监听
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                tvSearchResultNon.setVisibility(View.GONE);
+                tvNoteNon.setVisibility(View.GONE);
                 // 有数据的情况下才选
                 if (adapter != null) {
+                    tvNoteNon.setVisibility(View.GONE);
                     // 选择下拉框列表项的操作
                     switch (position) {
                         // 所有记事
@@ -508,9 +537,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         case 5:
                             pickRecordNote();
                             break;
+                        // 拼图记事
+                        case 6:
+                            pickAffixNote();
+                            break;
                         default:
                             break;
                     }
+                } else {
+                    tvNoteNon.setVisibility(View.VISIBLE);
                 }
             }
             
@@ -519,6 +554,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 // 未选中时候的操作
             }
         });
+    }
+    
+    /**
+     * 选择分类（拼图记事）
+     */
+    private void pickAffixNote() {
+        Config.notes.clear();
+        for (Note note : backupNotes) {
+            if (note.getKey() == Config.TYPE_PUZZLE) {
+                // 拼图记事，加入
+                Config.notes.add(note);
+            }
+        }
+        adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -533,6 +583,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         }
         adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -547,6 +598,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         }
         adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -561,6 +613,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         }
         adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -575,6 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         }
         adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -589,6 +643,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         }
         adapter.updateData(Config.notes);
+        showOrHideTip();
     }
     
     /**
@@ -598,6 +653,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         Config.notes.clear();
         Config.notes.addAll(backupNotes);
         adapter.updateData(Config.notes);
+        showOrHideTip();
+    }
+    
+    private void showOrHideTip() {
+        if (Config.notes.size() == 0) {
+            tvNoteNon.setVisibility(View.VISIBLE);
+        } else {
+            tvNoteNon.setVisibility(View.GONE);
+        }
     }
     
     @Override
@@ -629,6 +693,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
     }
     
+    /**
+     * 退出程序
+     */
     private void exit() {
         DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
         dialog.setCancelable(false);
@@ -655,8 +722,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         dialog.setTitle("搜索")
                 .setOnPositiveClickedListener("确认", v -> {
                     String message = dialog.getMessage();
-                    handleSearch(message);
-                    dialog.cancel();
+                    handleSearch(message, dialog);
                 })
                 .setOnNegativeClickListener("取消", v -> dialog.cancel())
                 .show();
@@ -667,11 +733,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      *
      * @param message 输入的搜索内容
      */
-    private void handleSearch(String message) {
+    private void handleSearch(String message, DiyInputDialog dialog) {
         if (TextUtils.isEmpty(message)) {
             // 没有输入
-            Toaster.showShort(this, "不输入内容搜什么呀 :)");
+            Toaster.showShort(this, "请输入搜索内容");
         } else {
+            dialog.dismiss();
             // 有输入
             Config.notes.clear();
             for (Note note : backupNotes) {
@@ -681,14 +748,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
             if (Config.notes.size() == 0) {
                 // 没找到
-                Toaster.showShort(this, "没有找到相关的内容 :(");
+                Toaster.showShort(this, "没有找到相关的内容");
                 // 显示提示文字
-                tvSearchResultNon.setVisibility(View.VISIBLE);
+                tvNoteNon.setVisibility(View.VISIBLE);
             } else {
                 // 找到了
-                tvSearchResultNon.setVisibility(View.GONE);
+                tvNoteNon.setVisibility(View.GONE);
                 adapter.updateData(Config.notes);
-                Toaster.showShort(this, "已为你找到相关内容 :/");
+                Toaster.showShort(this, "已为你找到相关内容");
             }
         }
     }

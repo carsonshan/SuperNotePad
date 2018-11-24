@@ -129,7 +129,7 @@ public class PictureAdapter extends BaseAdapter {
         }
     }
     
-    class ViewHolder {
+    static class ViewHolder {
         ConstraintLayout view;
         ImageView pickImage;
         ImageView deleteImage;

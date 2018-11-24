@@ -96,7 +96,7 @@ public class ShowNoteAdapter extends BaseAdapter {
         return convertView;
     }
     
-    class ViewHolder {
+    static class ViewHolder {
         ImageView noteImage;
         TextView noteTitle;
         TextView noteTime;

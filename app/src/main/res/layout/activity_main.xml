@@ -31,7 +31,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:drawableStart="@drawable/iv_user"
+                    android:drawableStart="@drawable/ic_user"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:textColor="@color/white"
@@ -131,7 +131,10 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
                     android:entries="@array/type"
-                    android:spinnerMode="dropdown" />
+                    android:popupElevation="8dp"
+                    android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    android:spinnerMode="dropdown"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
                 <ImageView
                     android:id="@+id/iv_search"
@@ -146,15 +149,16 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tv_search_result_non"
+                android:id="@+id/tv_note_non"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="128dp"
+                android:drawableTop="@drawable/ic_note_null"
+                android:drawablePadding="12dp"
                 android:text="@string/search_result_non"
                 android:textColor="@color/colorItem"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 

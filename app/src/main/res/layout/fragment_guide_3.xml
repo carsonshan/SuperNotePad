@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ImageView
+        android:layout_width="82dp"
+        android:layout_height="82dp"
+        android:layout_above="@+id/iv_center"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="52dp"
+        android:src="@drawable/splash"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/iv_center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_guide3"
+        tools:ignore="ContentDescription" />
+
+    <Button
+        android:id="@+id/btn_start_app"
+        android:layout_width="128dp"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="64dp"
+        android:background="@drawable/bg_button_join"
+        android:text="@string/join_now"
+        android:textColor="#DDDFE6"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

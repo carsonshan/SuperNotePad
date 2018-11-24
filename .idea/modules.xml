@@ -4,7 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SuperNotepad.iml" filepath="$PROJECT_DIR$/SuperNotepad.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/puzzleview/puzzleview.iml" filepath="$PROJECT_DIR$/puzzleview/puzzleview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testpoint/testpoint.iml" filepath="$PROJECT_DIR$/testpoint/testpoint.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testpuzzle/testpuzzle.iml" filepath="$PROJECT_DIR$/testpuzzle/testpuzzle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/teststicker/teststicker.iml" filepath="$PROJECT_DIR$/teststicker/teststicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testview/testview.iml" filepath="$PROJECT_DIR$/testview/testview.iml" />
     </modules>
   </component>
 </project>

@@ -61,7 +61,7 @@ public class CardAdapter extends BaseAdapter {
         return convertView;
     }
     
-    class ViewHolder {
+    static class ViewHolder {
         ImageView image;
         TextView name;
     }

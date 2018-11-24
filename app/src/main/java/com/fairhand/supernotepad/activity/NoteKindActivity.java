@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.fairhand.supernotepad.R;
 import com.fairhand.supernotepad.adapter.CardAdapter;
 import com.fairhand.supernotepad.entity.Card;
+import com.fairhand.supernotepad.puzzle.affix.PhotoAffixNoteActivity;
 import com.fairhand.supernotepad.recording.view.RecordNoteActivity;
 import com.fairhand.supernotepad.util.Toaster;
 import com.fairhand.supernotepad.video.view.VideoNoteActivity;
@@ -32,6 +33,8 @@ import butterknife.ButterKnife;
  * @date 2018/11/5
  */
 public class NoteKindActivity extends AppCompatActivity {
+    
+    public static final String IMAGE_PATH = "IMAGE_PATH";
     
     @BindView(R.id.grid_view_kind)
     GridView gridViewKind;
@@ -60,6 +63,14 @@ public class NoteKindActivity extends AppCompatActivity {
         
         initData();
         setGridViewListener();
+    }
+    
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+        cards.addAll(Arrays.asList(cardArray));
+        ivBack.setOnClickListener(v -> finish());
     }
     
     /**
@@ -110,8 +121,10 @@ public class NoteKindActivity extends AppCompatActivity {
                 .openGallery(PictureMimeType.ofImage())
                 // DIY主题
                 .theme(R.style.picture_diy_style)
-                // 最大选择9张
-                .maxSelectNum(9)
+                // 最大选择5张
+                .maxSelectNum(5)
+                // 最少选择2张
+                .minSelectNum(2)
                 // 每行显示4个
                 .imageSpanCount(4)
                 // 多选模式
@@ -126,18 +139,11 @@ public class NoteKindActivity extends AppCompatActivity {
                 .cropCompressQuality(60)
                 // 图片列表点击缩放效果
                 .isZoomAnim(true)
-                // 显示GIF图
+                // 不显示GIF图
                 .isGif(false)
                 // 结果回调onActivityResult
                 .forResult(PictureConfig.CHOOSE_REQUEST);
-    }
-    
-    /**
-     * 初始化数据
-     */
-    private void initData() {
-        cards.addAll(Arrays.asList(cardArray));
-        ivBack.setOnClickListener(v -> onBackPressed());
+        Toaster.showShort(this, "选择2~5张图片开始拼图");
     }
     
     @Override
@@ -160,7 +166,7 @@ public class NoteKindActivity extends AppCompatActivity {
                         }
                     }
                     Intent intent = new Intent(NoteKindActivity.this, PhotoAffixNoteActivity.class);
-                    intent.putStringArrayListExtra("path", path);
+                    intent.putStringArrayListExtra(IMAGE_PATH, path);
                     startActivity(intent);
                     break;
                 default:

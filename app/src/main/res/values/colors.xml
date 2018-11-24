@@ -17,4 +17,6 @@
 
     <color name="colorDim">#CCCCCC</color>
 
+    <color name="colorLineBar">#8ECCFF</color>
+
 </resources>

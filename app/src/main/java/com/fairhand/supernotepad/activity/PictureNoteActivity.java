@@ -113,7 +113,6 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
                 mPictureAdapter.updateData(mData);
             }
         }
-        
     }
     
     @Override

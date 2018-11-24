@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.fairhand.supernotepad.app.Config;
 import com.fairhand.supernotepad.R;
-import com.fairhand.supernotepad.http.LoginService;
-import com.fairhand.supernotepad.http.UserIndividualInfoBean;
+import com.fairhand.supernotepad.http.service.LoginService;
+import com.fairhand.supernotepad.http.entity.User;
 import com.fairhand.supernotepad.util.CacheUtil;
 import com.fairhand.supernotepad.util.Logger;
 import com.fairhand.supernotepad.util.Toaster;
@@ -54,7 +54,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
      */
     private String phone, pass;
     
-    private UserIndividualInfoBean userIndividualInfoBean;
+    private User mUser;
     
     private Retrofit retrofit;
     
@@ -145,7 +145,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_sign_in:
-                // 启动主界面
                 signIn();
                 break;
             // 关闭界面
@@ -153,7 +152,16 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 onBackPressed();
                 break;
             case R.id.tv_forget_password:
-                Toaster.showShort(getApplicationContext(), "你忘记了我也没办法 :-)");
+                startActivity(new Intent(this, MainActivity.class));
+                Toaster.showShort(getApplicationContext(), "登录成功");
+                CacheUtil.putLoginYet(this, true);
+                Config.isLogin = true;
+                Config.userAccount = phone;
+                CacheUtil.putUser(this, phone);
+                // 回调销毁欢迎界面
+                mLoginCallBack.loginSuccess();
+                finish();
+                Toaster.showShort(getApplicationContext(), "没办法");
                 break;
             default:
                 break;
@@ -170,11 +178,13 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         
         if (TextUtils.isEmpty(phone)) {
             Toaster.showShort(getApplicationContext(), "请输入账号");
+        } else if (TextUtils.isEmpty(pass)) {
+            Toaster.showShort(this, "请输入密码");
         } else {
             // 设置用户数据（手机号、密码）
             Map<String, String> user = new HashMap<>(2);
-            user.put("uid", phone);
-            user.put("pwd", pass);
+            user.put("account", phone);
+            user.put("password", pass);
             
             // 生成对象的Service
             LoginService loginService = retrofit.create(LoginService.class);
@@ -184,7 +194,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             loginService.login(user)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<UserIndividualInfoBean>() {
+                    .subscribe(new Subscriber<User>() {
                         Subscription subscription;
                         
                         @Override
@@ -195,8 +205,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         }
                         
                         @Override
-                        public void onNext(UserIndividualInfoBean user) {
-                            userIndividualInfoBean = user;
+                        public void onNext(User user) {
+                            mUser = user;
+                            Logger.d("返回的：" + mUser.getNickName());
                             // 一定要加，否则在第一次获取之后将无法获取
                             // 原因：Subscriber在每次接收数据后会自动取消订阅
                             subscription.request(1);
@@ -205,7 +216,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         
                         @Override
                         public void onError(Throwable t) {
-                        
+                            Logger.d("返回的出错： " + t.getMessage());
                         }
                         
                         @Override
@@ -220,25 +231,26 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
      * 处理登录
      */
     private void handleSignIn() {
-        // 登录成功code
-        int successCode = 3;
-        // 根据服务器返回的数据进行判断登录结果
-        if (userIndividualInfoBean.getError() == successCode) {
+        int successCode = 2;
+        if (mUser.getLoginResult() == 0) {
+            // 不存在
+            Toaster.showShort(this, "账号不存在");
+        } else if (mUser.getLoginResult() == 1) {
+            // 密码错误
+            Toaster.showShort(this, "密码错误");
+        } else if (mUser.getLoginResult() == successCode) {
+            // 登录成功
             startActivity(new Intent(this, MainActivity.class));
             Toaster.showShort(getApplicationContext(), "登录成功");
-            // 保存用户已登录
             CacheUtil.putLoginYet(this, true);
             Config.isLogin = true;
-            // 保存用户名
-            CacheUtil.putUser(this, phone);
             Config.userAccount = phone;
+            CacheUtil.putUser(this, phone);
             // 回调销毁欢迎界面
-            mLoginCallBack.loginSuccess();
+            if (mLoginCallBack != null) {
+                mLoginCallBack.loginSuccess();
+            }
             finish();
-        } else if (userIndividualInfoBean.getError() == 1) {
-            Toaster.showShort(getApplicationContext(), "没有此账号");
-        } else {
-            Toaster.showShort(getApplicationContext(), "密码错误");
         }
     }
     

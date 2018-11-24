@@ -315,11 +315,11 @@ public class HandPaintNoteActivity extends AppCompatActivity
         dialog.setCancelable(false);
         dialog.setTitle("保存成功")
                 .setMessage("分享一个吧？")
-                .setOnPositiveClickedListener("要分享", v -> {
+                .setOnPositiveClickedListener("我要分享", v -> {
                     handleShare();
                     dialog.dismiss();
                 })
-                .setOnNegativeClickListener("算了吧", v -> dialog.dismiss())
+                .setOnNegativeClickListener("不分享", v -> dialog.dismiss())
                 .show();
     }
     

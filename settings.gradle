@@ -1,1 +1,1 @@
-include ':app', ':puzzleview'
+include ':app', ':testview', ':testpuzzle', ':teststicker', ':teststicker', ':testpoint'
