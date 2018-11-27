@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#D25565</color>
-    <color name="colorPrimaryDark">#D25565</color>
-    <color name="colorAccent">#D25565</color>
+    <color name="colorPrimary">@color/colorItem</color>
+    <color name="colorPrimaryDark">@color/colorItem</color>
+    <color name="colorAccent">@color/colorItem</color>
 
-    <color name="colorItem">#D25565</color>
+    <color name="colorItem">#D87575</color>
 
     <color name="colorBottomTool">#EAE3E3</color>
 
@@ -18,5 +18,7 @@
     <color name="colorDim">#CCCCCC</color>
 
     <color name="colorLineBar">#8ECCFF</color>
+
+    <color name="colorSpecialBlack">#222831</color>
 
 </resources>

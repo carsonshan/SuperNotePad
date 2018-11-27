@@ -68,6 +68,8 @@ public class HandPaintNoteActivity extends AppCompatActivity
     TabLayout tabLayout;
     @BindView(R.id.iv_save)
     ImageView ivSave;
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
     
     private Realm mRealm;
     
@@ -275,6 +277,7 @@ public class HandPaintNoteActivity extends AppCompatActivity
         ivRedo.setOnClickListener(this);
         ivUndo.setOnClickListener(this);
         ivSave.setOnClickListener(this);
+        ivBack.setOnClickListener(this);
     }
     
     @Override
@@ -299,6 +302,17 @@ public class HandPaintNoteActivity extends AppCompatActivity
             // 保存
             case R.id.iv_save:
                 save();
+                break;
+            case R.id.iv_back:
+                DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
+                dialog.setTitle("提示")
+                        .setMessage("退出后不会保存已绘制内容，确认退出？")
+                        .setOnNegativeClickListener("继续画", v1 -> dialog.dismiss())
+                        .setOnPositiveClickedListener("退出", v12 -> {
+                            dialog.dismiss();
+                            finish();
+                        })
+                        .show();
                 break;
             default:
                 break;

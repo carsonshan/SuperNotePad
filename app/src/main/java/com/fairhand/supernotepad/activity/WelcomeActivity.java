@@ -24,6 +24,7 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
     private TextView signUp;
     private View signInView;
     private ImageView loginFace;
+    private TextView tourist;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
         signIn = findViewById(R.id.tv_sign_in);
         signUp = findViewById(R.id.tv_sign_up);
         signInView = findViewById(R.id.view_sign_in);
+        tourist = findViewById(R.id.tv_tourist);
     }
     
     /**
@@ -56,6 +58,7 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
         signIn.setOnClickListener(this);
         signUp.setOnClickListener(this);
         signInView.setOnClickListener(this);
+        tourist.setOnClickListener(this);
         
         SignInActivity.setCallBack(this);
     }
@@ -84,6 +87,10 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
                         new Pair<>(signUp, "share_sign_up"),
                         new Pair<>(loginFace, "share_image")
                 ).toBundle());
+                break;
+            case R.id.tv_tourist:
+                startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                finish();
                 break;
             default:
                 break;

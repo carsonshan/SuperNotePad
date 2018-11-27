@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="16sp"
             tools:text="名称" />
@@ -36,7 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="12dp"
-            android:textColor="#CCCCCC"
+            android:ellipsize="end"
+            android:maxLength="24"
+            android:textColor="#EEEEEE"
             android:textSize="12sp"
             tools:text="内容" />
 
@@ -47,7 +50,8 @@
             android:layout_gravity="center"
             android:layout_marginEnd="12dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_more" />
+            android:src="@drawable/ic_more"
+            android:tint="@color/white" />
 
     </LinearLayout>
 

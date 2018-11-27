@@ -34,6 +34,8 @@ public class CommonNoteActivity extends AppCompatActivity {
     ImageView ivSave;
     @BindView(R.id.et_content)
     EditText etContent;
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
     
     private Realm mRealm;
     
@@ -48,6 +50,7 @@ public class CommonNoteActivity extends AppCompatActivity {
         initData();
         
         ivSave.setOnClickListener(v -> save());
+        ivBack.setOnClickListener(v -> finish());
     }
     
     @Override

@@ -128,4 +128,11 @@ public class ItemView extends LinearLayout {
         tvRightText.setText(rightText);
     }
     
+    /**
+     * 获取右边文本
+     */
+    public String getRightText() {
+        return tvRightText.getText().toString();
+    }
+    
 }

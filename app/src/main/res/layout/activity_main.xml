@@ -31,12 +31,12 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:drawableStart="@drawable/ic_user"
+                    android:drawableStart="@drawable/ic_avatar"
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
+                    android:text="@string/tourist"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
-                    tools:text="18151692806" />
+                    android:textSize="20sp" />
 
                 <ImageView
                     android:id="@+id/iv_exit_app"
@@ -45,7 +45,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="8dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/iv_exit" />
+                    android:src="@drawable/ic_exit" />
 
             </LinearLayout>
 
@@ -69,7 +69,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
-                android:background="#716e77" />
+                android:background="@color/colorSpecialBlack" />
 
             <com.fairhand.supernotepad.view.ItemView
                 android:id="@+id/iv_all_note"
@@ -78,7 +78,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="24dp"
-                app:left_icon="@drawable/iv_all_note"
+                app:left_icon="@drawable/ic_all"
                 app:left_text="所有记事"
                 app:right_text="32"
                 app:show_left_icon="true"
@@ -144,7 +144,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/iv_search" />
+                    android:src="@drawable/ic_search" />
 
             </RelativeLayout>
 

@@ -53,8 +53,8 @@ public class DiyFontDialog extends BaseDialog implements View.OnClickListener {
         etInputText.setSelection(etInputText.getText().length());
         fonts = new ArrayList<>();
         fonts.add(new Font("默认字体", null));
+        fonts.add(new Font("记事", Typeface.createFromAsset(mContext.getAssets(), "font/font1.ttf")));
         fonts.add(new Font("记事", Typeface.createFromAsset(mContext.getAssets(), "font/font2.ttf")));
-        fonts.add(new Font("记事", Typeface.createFromAsset(mContext.getAssets(), "font/font3.ttf")));
         FontAdapter adapter = new FontAdapter(fonts, mContext);
         listView.setAdapter(adapter);
         

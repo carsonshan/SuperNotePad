@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <!--suppress DeprecatedClassUsageInspection -->
+    <!-- suppress DeprecatedClassUsageInspection -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -152,12 +152,27 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme" />
-        <!--新手引导页-->
+        <!-- 新手引导页 -->
         <activity
             android:name=".activity.GuideActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreenTheme" />
+        <!-- 事件记事 -->
+        <activity
+            android:name=".affair.AffairNoteActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 添加事件记事 -->
+        <activity
+            android:name=".affair.AddAffairActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 事件细节 -->
+        <activity
+            android:name=".affair.AffairDetailActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

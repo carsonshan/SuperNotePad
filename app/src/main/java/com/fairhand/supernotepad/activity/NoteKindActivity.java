@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.fairhand.supernotepad.R;
 import com.fairhand.supernotepad.adapter.CardAdapter;
+import com.fairhand.supernotepad.affair.AffairNoteActivity;
 import com.fairhand.supernotepad.entity.Card;
 import com.fairhand.supernotepad.puzzle.affix.PhotoAffixNoteActivity;
 import com.fairhand.supernotepad.recording.view.RecordNoteActivity;
@@ -47,7 +48,7 @@ public class NoteKindActivity extends AppCompatActivity {
     private Card[] cardArray = {
             new Card("普通记事", R.drawable.iv_common_note),
             new Card("手绘记事", R.drawable.iv_hand_paint),
-            new Card("事项记事", R.drawable.iv_affair_note),
+            new Card("事件记事", R.drawable.iv_affair_note),
             new Card("照片记事", R.drawable.iv_pictures),
             new Card("录音记事", R.drawable.iv_recording),
             new Card("拼图记事", R.drawable.iv_affix),
@@ -82,30 +83,24 @@ public class NoteKindActivity extends AppCompatActivity {
         gridViewKind.setOnItemClickListener((parent, view, position, id) -> {
             switch (position) {
                 case 0:
-                    // 跳转到普通记事界面
                     startActivity(new Intent(NoteKindActivity.this, CommonNoteActivity.class));
                     break;
                 case 1:
-                    // 跳转到手绘记事
                     startActivity(new Intent(NoteKindActivity.this, HandPaintNoteActivity.class));
                     break;
                 case 2:
-                    Toaster.showShort(getApplicationContext(), "事项记事");
+                    startActivity(new Intent(NoteKindActivity.this, AffairNoteActivity.class));
                     break;
                 case 3:
-                    // 跳转到拍照记事
                     startActivity(new Intent(NoteKindActivity.this, PictureNoteActivity.class));
                     break;
                 case 4:
-                    // 跳转到录音记事
                     startActivity(new Intent(NoteKindActivity.this, RecordNoteActivity.class));
                     break;
                 case 5:
-                    // 选择图片
                     pick();
                     break;
                 case 6:
-                    // 跳转到摄像记事
                     startActivity(new Intent(NoteKindActivity.this, VideoNoteActivity.class));
                     break;
                 default:

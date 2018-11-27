@@ -151,17 +151,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             case R.id.iv_close:
                 onBackPressed();
                 break;
+            // 忘记密码
             case R.id.tv_forget_password:
-                startActivity(new Intent(this, MainActivity.class));
-                Toaster.showShort(getApplicationContext(), "登录成功");
-                CacheUtil.putLoginYet(this, true);
-                Config.isLogin = true;
-                Config.userAccount = phone;
-                CacheUtil.putUser(this, phone);
-                // 回调销毁欢迎界面
-                mLoginCallBack.loginSuccess();
-                finish();
-                Toaster.showShort(getApplicationContext(), "没办法");
+                Toaster.showShort(getApplicationContext(), "大家都忘了");
                 break;
             default:
                 break;

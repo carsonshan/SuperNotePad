@@ -44,7 +44,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:background="#252A34" />
+        android:background="@color/colorSpecialBlack" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp"
-            android:background="#252A34" />
+            android:background="@color/colorSpecialBlack" />
 
         <TextView
             android:id="@+id/tv_confirm"
@@ -76,7 +76,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/btn_confirm"
-            android:textColor="#252A34"
+            android:textColor="@color/colorSpecialBlack"
             android:textSize="15sp"
             android:textStyle="bold" />
 

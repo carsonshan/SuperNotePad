@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.fairhand.supernotepad.R;
 import com.fairhand.supernotepad.adapter.CardAdapter;
 import com.fairhand.supernotepad.adapter.ShowNoteAdapter;
+import com.fairhand.supernotepad.affair.AffairNoteActivity;
 import com.fairhand.supernotepad.app.Config;
 import com.fairhand.supernotepad.app.UpdateNote;
 import com.fairhand.supernotepad.entity.Card;
@@ -98,13 +99,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     
     private int locationFromDatabase;
     
+    private ArrayList<Note> notes = new ArrayList<>();
+    
     /**
      * 卡片数据
      */
     private Card[] cardArray = {
             new Card("普通记事", R.drawable.iv_common_note),
             new Card("手绘记事", R.drawable.iv_hand_paint),
-            new Card("事项记事", R.drawable.iv_affair_note),
+            new Card("事件记事", R.drawable.iv_affair_note),
             new Card("照片记事", R.drawable.iv_pictures)
     };
     private ArrayList<Card> cards = new ArrayList<>();
@@ -183,18 +186,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         mGridViewCard.setOnItemClickListener((parent, view, position, id) -> {
             switch (position) {
                 case 0:
-                    // 跳转到普通记事界面
                     startActivity(new Intent(MainActivity.this, CommonNoteActivity.class));
                     break;
                 case 1:
-                    // 跳转到手绘记事
                     startActivity(new Intent(MainActivity.this, HandPaintNoteActivity.class));
                     break;
                 case 2:
-                    Toaster.showShort(getApplicationContext(), "事项记事");
+                    startActivity(new Intent(MainActivity.this, AffairNoteActivity.class));
                     break;
                 case 3:
-                    // 跳转到拍照记事
                     startActivity(new Intent(MainActivity.this, PictureNoteActivity.class));
                     break;
                 default:
@@ -207,17 +207,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 设置私密数据
      */
     private void setSecretData() {
-        tvNoteNon.setVisibility(View.GONE);
-        adapter = new ShowNoteAdapter(this, Config.notes);
-        Logger.d("设置主视图");
+        adapter = new ShowNoteAdapter(this, notes);
         // 查询所有记事记录
         RealmResults<RealmSecretNote> realmNotes = mRealm.where(RealmSecretNote.class).findAll();
         Logger.d("大小------------" + realmNotes.size());
         // 先清空数据
-        Config.notes.clear();
+        notes.clear();
         backupNotes.clear();
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         if (realmNotes.size() > 0) {
+            tvNoteNon.setVisibility(View.GONE);
             locationFromDatabase = 0;
             // 有数据
             for (RealmSecretNote item : realmNotes) {
@@ -250,13 +249,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         note.setNoteImagePath(data.get(0));
                         break;
                 }
-                Config.notes.add(note);
+                notes.add(note);
             }
             // 备份
-            backupNotes.addAll(Config.notes);
+            backupNotes.addAll(notes);
             setGridViewListener();
+        } else {
+            tvNoteNon.setVisibility(View.VISIBLE);
         }
-        ivAllNote.setRightText(backupNotes.size() + "");
+        ivAllNote.setRightText(backupNotes.size() > 0 ? backupNotes.size() + "" : "暂无");
     }
     
     /**
@@ -264,16 +265,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      */
     private void setMainViewData() {
         Logger.d("位置", "偷偷设置视图");
-        tvNoteNon.setVisibility(View.GONE);
-        adapter = new ShowNoteAdapter(this, Config.notes);
+        adapter = new ShowNoteAdapter(this, notes);
         // 查询所有记事记录
         RealmResults<RealmNote> realmNotes = mRealm.where(RealmNote.class).findAll();
         Logger.d("大小------------" + realmNotes.size());
         // 先清空数据
-        Config.notes.clear();
+        notes.clear();
         backupNotes.clear();
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         if (realmNotes.size() > 0) {
+            tvNoteNon.setVisibility(View.GONE);
             // 有数据
             locationFromDatabase = 0;
             for (RealmNote item : realmNotes) {
@@ -306,13 +307,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         note.setNoteImagePath(data.get(0));
                         break;
                 }
-                Config.notes.add(note);
+                notes.add(note);
             }
             // 备份
-            backupNotes.addAll(Config.notes);
+            backupNotes.addAll(notes);
             setGridViewListener();
+        } else {
+            tvNoteNon.setVisibility(View.VISIBLE);
         }
-        ivAllNote.setRightText(backupNotes.size() + "");
+        ivAllNote.setRightText(backupNotes.size() > 0 ? backupNotes.size() + "" : "暂无");
     }
     
     /**
@@ -320,16 +323,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      */
     private void setGridViewListener() {
         // 设置mGridViewNote的适配器、点击打开监听、长按删除监听
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         mGridViewNote.setAdapter(adapter);
         mGridViewNote.setOnItemLongClickListener((parent, view, position, id) -> {
-            delete(Config.notes.get(position).getLocationFromDatabase(), position);
+            delete(notes.get(position).getLocationFromDatabase(), position);
             // 返回true消费掉此事件
             return true;
         });
         mGridViewNote.setOnItemClickListener((parent, view, position, id) -> {
             // 获取到记事类型关键字
-            Note note = Config.notes.get(position);
+            Note note = notes.get(position);
             int key = note.getKey();
             switch (key) {
                 case Config.TYPE_COMMON:
@@ -355,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     break;
                 case Config.TYPE_RECORDING:
                     // 录音记事
-                    startPlaying(Config.notes.get(position).getRecordingPath());
+                    startPlaying(notes.get(position).getRecordingPath());
                     break;
                 case Config.TYPE_VIDEO:
                     // 摄像记事
@@ -466,9 +469,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
         // 移除选中item并通知刷新界面
         backupNotes.remove(position);
-        Config.notes.remove(position);
-        adapter.updateData(Config.notes);
-        ivAllNote.setRightText(Config.notes.size() + "");
+        notes.remove(position);
+        adapter.updateData(notes);
+        ivAllNote.setRightText(notes.size() + "");
         updateLocationFromDatabase();
     }
     
@@ -477,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      */
     private void updateLocationFromDatabase() {
         locationFromDatabase = 0;
-        for (Note note : Config.notes) {
+        for (Note note : notes) {
             note.setLocationFromDatabase(locationFromDatabase++);
         }
     }
@@ -486,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 初始化数据
      */
     private void initData() {
-        tvUserAccount.setText(Config.userAccount);
+        tvUserAccount.setText(TextUtils.isEmpty(Config.userAccount) ? "游客体验" : Config.userAccount);
         
         ivAllNote.setOnClickListener(this);
         ivNotePad.setOnClickListener(this);
@@ -560,14 +563,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（拼图记事）
      */
     private void pickAffixNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_PUZZLE) {
                 // 拼图记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -575,14 +578,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（录音记事）
      */
     private void pickRecordNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_RECORDING) {
                 // 拍摄记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -590,14 +593,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（拍摄记事）
      */
     private void pickVideoNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_VIDEO) {
                 // 拍摄记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -605,14 +608,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（照片记事）
      */
     private void pickPictureNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_PICTURE) {
                 // 照片记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -620,14 +623,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（手绘记事）
      */
     private void pickHandPaintNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_HAND_PAINT) {
                 // 手绘记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -635,14 +638,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（普通记事）
      */
     private void pickCommonNote() {
-        Config.notes.clear();
+        notes.clear();
         for (Note note : backupNotes) {
             if (note.getKey() == Config.TYPE_COMMON) {
                 // 普通记事，加入
-                Config.notes.add(note);
+                notes.add(note);
             }
         }
-        adapter.updateData(Config.notes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
@@ -650,14 +653,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * 选择分类（所有记事）
      */
     private void pickAllNote() {
-        Config.notes.clear();
-        Config.notes.addAll(backupNotes);
-        adapter.updateData(Config.notes);
+        notes.clear();
+        notes.addAll(backupNotes);
+        adapter.updateData(notes);
         showOrHideTip();
     }
     
     private void showOrHideTip() {
-        if (Config.notes.size() == 0) {
+        if (notes.size() == 0) {
             tvNoteNon.setVisibility(View.VISIBLE);
         } else {
             tvNoteNon.setVisibility(View.GONE);
@@ -740,13 +743,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         } else {
             dialog.dismiss();
             // 有输入
-            Config.notes.clear();
+            notes.clear();
             for (Note note : backupNotes) {
                 if (note.getNoteTitle().contains(message)) {
-                    Config.notes.add(note);
+                    notes.add(note);
                 }
             }
-            if (Config.notes.size() == 0) {
+            if (notes.size() == 0) {
                 // 没找到
                 Toaster.showShort(this, "没有找到相关的内容");
                 // 显示提示文字
@@ -754,7 +757,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             } else {
                 // 找到了
                 tvNoteNon.setVisibility(View.GONE);
-                adapter.updateData(Config.notes);
+                adapter.updateData(notes);
                 Toaster.showShort(this, "已为你找到相关内容");
             }
         }

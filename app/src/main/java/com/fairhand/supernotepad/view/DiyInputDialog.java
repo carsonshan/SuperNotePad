@@ -98,7 +98,7 @@ public class DiyInputDialog extends Dialog {
     }
     
     /**
-     * 获取输入的记事标题
+     * 获取输入的内容
      */
     public String getMessage() {
         return message.getText().toString();

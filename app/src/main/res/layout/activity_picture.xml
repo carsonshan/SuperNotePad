@@ -11,6 +11,15 @@
         android:layout_height="wrap_content"
         android:background="@color/colorItem">
 
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_arrow_back_white_36dp"
+            tools:ignore="ContentDescription" />
+
         <EditText
             android:id="@+id/et_title"
             android:layout_width="0dp"

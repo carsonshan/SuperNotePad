@@ -101,4 +101,6 @@ dependencies {
     implementation 'jp.co.cyberagent.android:gpuimage:2.0.3'
     // 贴纸
     implementation 'com.flying.xiaopo:sticker:1.6.0'
+    // 日期选择
+    implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
 }

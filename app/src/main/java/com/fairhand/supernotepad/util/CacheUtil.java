@@ -37,7 +37,7 @@ public class CacheUtil {
     public static String getUser(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 "SAVE_USER", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("KEY_USER", null);
+        return sharedPreferences.getString("KEY_USER", "游客体验");
     }
     
     /**

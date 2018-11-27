@@ -1,13 +1,12 @@
 package com.fairhand.supernotepad.app;
 
 import android.app.Application;
+import android.util.Log;
 
-import com.fairhand.supernotepad.entity.Note;
 import com.fairhand.supernotepad.util.CacheUtil;
 import com.mob.MobSDK;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -20,6 +19,8 @@ import io.realm.RealmConfiguration;
  * @date 2018/10/31
  */
 public class Config extends Application {
+    
+    public static final boolean IS_DEBUG = false;
     
     /**
      * 私密密码
@@ -65,11 +66,6 @@ public class Config extends Application {
      * 记事类型(摄像)
      */
     public static final int TYPE_VIDEO = 6;
-    
-    /**
-     * 保存的所有记事
-     */
-    public static ArrayList<Note> notes = new ArrayList<>();
     
     /**
      * 用户账号
@@ -137,18 +133,22 @@ public class Config extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("Config测试", "外线程：" + Thread.currentThread());
         // 初始化MobSDK
         MobSDK.init(this);
-        
+        Log.d("Config测试", "内线程：" + Thread.currentThread());
         // 初始化Realm数据库框架
         Realm.init(this);
         // DIY配置Realm
-        RealmConfiguration configuration = new RealmConfiguration.Builder()
-                                                   // 指定数据库的名字
-                                                   .name("superNote.realm")
-                                                   .build();
+        RealmConfiguration diyConfiguration = new RealmConfiguration.Builder()
+                                                      // 指定数据库的名字
+                                                      .name("superNote.realm")
+                                                      // 版本号（数据库有更新时往上增加）
+                                                      .schemaVersion(3)
+                                                      .migration(new Migration())
+                                                      .build();
         // 设置DIY配置为默认的配置
-        Realm.setDefaultConfiguration(configuration);
+        Realm.setDefaultConfiguration(diyConfiguration);
         
         initFile();
         

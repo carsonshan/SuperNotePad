@@ -57,6 +57,8 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
     ImageView chooseAlbum;
     @BindView(R.id.grid_view_picture)
     GridView gridViewImage;
+    @BindView(R.id.iv_back)
+    ImageView ivBack;
     
     private Realm mRealm;
     
@@ -89,6 +91,7 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
         chooseCamera.setOnClickListener(this);
         chooseAlbum.setOnClickListener(this);
         ivSave.setOnClickListener(this);
+        ivBack.setOnClickListener(this);
         
         mPictureAdapter = new PictureAdapter(this);
         // 设置GridView的适配器
@@ -137,6 +140,9 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
             // 保存
             case R.id.iv_save:
                 save();
+                break;
+            case R.id.iv_back:
+                finish();
                 break;
             default:
                 break;

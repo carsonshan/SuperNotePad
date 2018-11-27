@@ -16,18 +16,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="28dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/colorItem"
+            android:paddingStart="3dp"
+            android:src="@drawable/ic_arrow_back_white_36dp"
+            tools:ignore="ContentDescription,RtlSymmetry" />
+
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorItem"
+            android:paddingStart="6dp"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="#08D9D6"
             app:tabTextAppearance="@android:style/TextAppearance.Holo.Medium"
-            app:tabTextColor="@color/white" />
+            app:tabTextColor="@color/white"
+            tools:ignore="RtlSymmetry" />
 
         <ImageView
             android:id="@+id/iv_save"
@@ -36,16 +48,16 @@
             android:layout_gravity="center_vertical"
             android:background="@color/colorItem"
             android:contentDescription="@string/app_name"
-            android:paddingStart="3dp"
-            android:paddingEnd="8dp"
-            android:src="@drawable/iv_save_note" />
+            android:paddingEnd="6dp"
+            android:src="@drawable/iv_save_note"
+            tools:ignore="RtlSymmetry" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_bottom_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorBottomTool"
         android:padding="8dp">
