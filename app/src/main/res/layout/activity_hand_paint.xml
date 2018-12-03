@@ -57,9 +57,9 @@
     <LinearLayout
         android:id="@+id/ll_bottom_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="46dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorBottomTool"
+        android:background="@drawable/shape_gradient_face"
         android:padding="8dp">
 
         <ImageView
@@ -68,6 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/undo"
+            android:tint="@color/white"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -76,6 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/iv_clear"
+            android:tint="@color/white"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -84,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/redo"
+            android:tint="@color/white"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>

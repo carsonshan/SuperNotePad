@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fairhand.supernotepad.R;
+import com.fairhand.supernotepad.app.Config;
+import com.fairhand.supernotepad.util.CacheUtil;
 import com.fairhand.supernotepad.util.Logger;
 
 /**
@@ -90,6 +92,8 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.tv_tourist:
                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                CacheUtil.putTouristYet(this, true);
+                Config.isTourist = true;
                 finish();
                 break;
             default:

@@ -3,7 +3,7 @@ package com.fairhand.supernotepad.entity;
 import java.io.Serializable;
 
 /**
- * 事件，，，我是真服了
+ * 事件，，，我是服了
  *
  * @author Phanton
  * @date 11/25/2018 - Sunday - 5:16 PM

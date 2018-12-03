@@ -67,7 +67,8 @@ public class VideoModelImpl implements IVideoModel {
         if (recordingNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-                realmNote.setKey(Config.TYPE_VIDEO);
+                realmNote.setKind(Config.TYPE_VIDEO);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.setVideoPath(filePath);
@@ -91,7 +92,8 @@ public class VideoModelImpl implements IVideoModel {
         if (recordingNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmNote realmNote = realm.createObject(RealmNote.class);
-                realmNote.setKey(Config.TYPE_VIDEO);
+                realmNote.setKind(Config.TYPE_VIDEO);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.setVideoPath(filePath);

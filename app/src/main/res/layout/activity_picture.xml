@@ -82,7 +82,7 @@
         android:id="@+id/ll_bottom_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBottomTool"
+        android:background="@drawable/shape_gradient_face"
         android:padding="8dp">
 
         <ImageView
@@ -92,7 +92,8 @@
             android:layout_marginStart="24dp"
             android:layout_weight="1"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/iv_camera" />
+            android:src="@drawable/iv_camera"
+            android:tint="@color/white" />
 
         <ImageView
             android:id="@+id/iv_album"
@@ -101,7 +102,8 @@
             android:layout_marginStart="24dp"
             android:layout_weight="1"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/iv_album" />
+            android:src="@drawable/iv_album"
+            android:tint="@color/white" />
 
     </LinearLayout>
 

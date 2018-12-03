@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.12138"
+        versionName "0.12138-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,6 +21,12 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    // 指定资源目录
+    sourceSets {
+        main {
+            res.srcDirs = ['src/main/res', 'src/main/res-starry']
+        }
     }
 }
 
@@ -83,7 +89,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     // RxJava
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     // 图片选择器
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
@@ -103,4 +109,6 @@ dependencies {
     implementation 'com.flying.xiaopo:sticker:1.6.0'
     // 日期选择
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
+    // 圆圆的图片
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

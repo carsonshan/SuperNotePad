@@ -13,11 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.fairhand.supernotepad.app.Config;
 import com.fairhand.supernotepad.R;
-import com.fairhand.supernotepad.http.service.LoginService;
+import com.fairhand.supernotepad.app.Config;
+import com.fairhand.supernotepad.app.RetrofitService;
 import com.fairhand.supernotepad.http.entity.User;
-import com.fairhand.supernotepad.util.CacheUtil;
+import com.fairhand.supernotepad.http.service.UserService;
 import com.fairhand.supernotepad.util.Logger;
 import com.fairhand.supernotepad.util.Toaster;
 
@@ -29,9 +29,7 @@ import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import io.realm.Realm;
 
 /**
  * 登录界面
@@ -56,12 +54,13 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     
     private User mUser;
     
-    private Retrofit retrofit;
+    Realm realm;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        realm = Realm.getDefaultInstance();
         
         initView();
         setData();
@@ -71,6 +70,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         mLoginCallBack = null;
+        realm.close();
         super.onDestroy();
     }
     
@@ -111,13 +111,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             userPassword.setText(pass);
             userName.setSelection(phone == null ? 0 : phone.length());
         }
-        
-        // 初始化Retrofit
-        retrofit = new Retrofit.Builder()
-                           .baseUrl(Config.BASE_URL)
-                           .addConverterFactory(GsonConverterFactory.create())
-                           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                           .build();
     }
     
     /**
@@ -179,7 +172,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             user.put("password", pass);
             
             // 生成对象的Service
-            LoginService loginService = retrofit.create(LoginService.class);
+            UserService loginService = RetrofitService.getInstance().create(UserService.class);
             
             // 创建请求对象（结合RxJava使用（Flowable））
             // 去服务器请求登录
@@ -199,7 +192,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void onNext(User user) {
                             mUser = user;
-                            Logger.d("返回的：" + mUser.getNickName());
                             // 一定要加，否则在第一次获取之后将无法获取
                             // 原因：Subscriber在每次接收数据后会自动取消订阅
                             subscription.request(1);
@@ -208,7 +200,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         
                         @Override
                         public void onError(Throwable t) {
-                            Logger.d("返回的出错： " + t.getMessage());
+                            Logger.d("登录错误信息： " + t.getMessage());
                         }
                         
                         @Override
@@ -233,11 +225,10 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         } else if (mUser.getLoginResult() == successCode) {
             // 登录成功
             startActivity(new Intent(this, MainActivity.class));
+            // 保存当前用户
+            realm.executeTransaction(realm -> realm.copyToRealmOrUpdate(mUser));
+            Config.user = mUser;
             Toaster.showShort(getApplicationContext(), "登录成功");
-            CacheUtil.putLoginYet(this, true);
-            Config.isLogin = true;
-            Config.userAccount = phone;
-            CacheUtil.putUser(this, phone);
             // 回调销毁欢迎界面
             if (mLoginCallBack != null) {
                 mLoginCallBack.loginSuccess();

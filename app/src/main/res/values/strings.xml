@@ -69,7 +69,7 @@
     <string name="guide_tip_1">记事管理，有条不紊</string>
     <string name="guide_tip_2">多样记事，选你所爱</string>
     <string name="join_now">即刻加入</string>
-    <string name="all_affair">所有事件</string>
+    <string name="all_affair">事件</string>
     <string name="add_affair_tip">好冷，别让这里空着…\n点击下方按钮开始创建你的第一个事件吧</string>
     <string name="add_affair">添加事件</string>
     <string name="input_affair_title">请输入事件标题</string>
@@ -79,5 +79,10 @@
     <string name="not_remind">不提醒</string>
     <string name="detail">详情</string>
     <string name="today">今天</string>
-    <string name="tourist">游客体验</string>
+    <string name="tourist">游客</string>
+    <string name="setting">设置</string>
+    <string name="version">版本号：0.12138-beta</string>
+    <string name="check_update">检查更新</string>
+    <string name="update_avatar">更换头像</string>
+    <string name="divider">/</string>
 </resources>

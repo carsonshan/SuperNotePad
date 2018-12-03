@@ -1,5 +1,6 @@
 package com.fairhand.supernotepad.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,9 @@ import java.util.List;
  * @author FairHand
  * @date 2018/11/3
  */
-public class Note {
+public class Note implements Serializable {
+    
+    private String key;
     
     /**
      * 记事图片ID
@@ -31,9 +34,9 @@ public class Note {
      */
     private String noteContent;
     /**
-     * 主键(记事的类型)
+     * 记事的类型
      */
-    private int key;
+    private int kind;
     /**
      * 照片
      */
@@ -47,17 +50,12 @@ public class Note {
      */
     private String videoPath;
     
-    /**
-     * 在数据库中的位置
-     */
-    private int locationFromDatabase;
-    
-    public int getLocationFromDatabase() {
-        return locationFromDatabase;
+    public String getKey() {
+        return key;
     }
     
-    public void setLocationFromDatabase(int locationFromDatabase) {
-        this.locationFromDatabase = locationFromDatabase;
+    public void setKey(String key) {
+        this.key = key;
     }
     
     public String getVideoPath() {
@@ -116,12 +114,12 @@ public class Note {
         this.noteContent = noteContent;
     }
     
-    public int getKey() {
-        return key;
+    public int getKind() {
+        return kind;
     }
     
-    public void setKey(int key) {
-        this.key = key;
+    public void setKind(int kind) {
+        this.kind = kind;
     }
     
     public List<String> getPictureIds() {

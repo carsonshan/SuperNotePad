@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:fitsSystemWindows="true"
     tools:context=".activity.SignInActivity">
 
     <android.support.constraint.Guideline
@@ -149,7 +150,7 @@
         android:background="@drawable/bg_button"
         android:text="@string/sign_up"
         android:textAllCaps="false"
-        android:textColor="#B13168"
+        android:textColor="#437EAC"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
@@ -190,7 +191,7 @@
         android:layout_marginEnd="36dp"
         android:background="@drawable/bg_button"
         android:text="@string/send_code"
-        android:textColor="#B13168"
+        android:textColor="#437EAC"
         android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/et_mob_code"
         app:layout_constraintEnd_toEndOf="parent" />

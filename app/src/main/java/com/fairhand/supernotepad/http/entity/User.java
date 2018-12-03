@@ -1,6 +1,9 @@
 package com.fairhand.supernotepad.http.entity;
 
-import java.io.Serializable;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * 用户实体类
@@ -8,23 +11,16 @@ import java.io.Serializable;
  * @author Phanton
  * @date 2018/11/18 - 星期日 - 15:16
  */
-public class User implements Serializable {
+public class User extends RealmObject {
     
-    private int id;
+    @Ignore
     private int loginResult;
+    @PrimaryKey
     private String account;
+    @Required
     private String password;
     private String nickName;
-    private String msg;
-    private int code;
-    
-    public int getId() {
-        return id;
-    }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
+    private String avatar;
     
     public int getLoginResult() {
         return loginResult;
@@ -56,22 +52,6 @@ public class User implements Serializable {
     
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-    
-    public String getMsg() {
-        return msg;
-    }
-    
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-    
-    public int getCode() {
-        return code;
-    }
-    
-    public void setCode(int code) {
-        this.code = code;
     }
     
 }

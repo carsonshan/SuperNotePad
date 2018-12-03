@@ -14,39 +14,21 @@ import com.fairhand.supernotepad.app.Config;
 public class CacheUtil {
     
     /**
-     * 获取是否已登录
+     * 获取是否游客登陆
      */
-    public static boolean isLoginYet(Context context) {
+    public static boolean isTouristYet(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
-                Config.SAVE_IS_LOGIN, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(Config.KEY_IS_LOGIN, false);
+                "SAVE_IS_LOGIN", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("KEY_IS_LOGIN", false);
     }
     
     /**
-     * 设置是否已登录
+     * 设置游客登陆
      */
-    public static void putLoginYet(Context context, boolean value) {
+    public static void putTouristYet(Context context, boolean value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                Config.SAVE_IS_LOGIN, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(Config.KEY_IS_LOGIN, value).apply();
-    }
-    
-    /**
-     * 获取用户名
-     */
-    public static String getUser(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                "SAVE_USER", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("KEY_USER", "游客体验");
-    }
-    
-    /**
-     * 设置用户名
-     */
-    public static void putUser(Context context, String value) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(
-                "SAVE_USER", Context.MODE_PRIVATE).edit();
-        editor.putString("KEY_USER", value).apply();
+                "SAVE_IS_LOGIN", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("KEY_IS_LOGIN", value).apply();
     }
     
     /**

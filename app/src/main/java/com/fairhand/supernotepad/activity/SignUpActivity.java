@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fairhand.supernotepad.R;
-import com.fairhand.supernotepad.app.Config;
-import com.fairhand.supernotepad.http.service.SignUpService;
+import com.fairhand.supernotepad.app.RetrofitService;
+import com.fairhand.supernotepad.http.service.UserService;
 import com.fairhand.supernotepad.util.Logger;
 import com.fairhand.supernotepad.util.RegularExpressionUtil;
 import com.fairhand.supernotepad.util.Toaster;
@@ -33,9 +33,6 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * 注册界面
@@ -65,8 +62,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     ImageView ivClose;
     
     private TimeCount mTimeCount;
-    
-    private Retrofit retrofit;
     
     /**
      * Intent传值key
@@ -104,13 +99,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         ivClose.setOnClickListener(this);
         btnSendCode.setOnClickListener(this);
         btnSignUp.setOnClickListener(this);
-        
-        // 初始化Retrofit
-        retrofit = new Retrofit.Builder()
-                           .baseUrl(Config.BASE_URL)
-                           .addConverterFactory(ScalarsConverterFactory.create())
-                           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                           .build();
     }
     
     @Override
@@ -216,8 +204,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         user.put("account", phoneNumber);
         user.put("password", password);
         
-        SignUpService service = retrofit.create(SignUpService.class);
-        service.enroll(user)
+        UserService enrollService = RetrofitService.getInstance().create(UserService.class);
+        enrollService.enroll(user)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Integer>() {

@@ -8,17 +8,17 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Xfermode;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 
+import com.fairhand.supernotepad.entity.shape.Rect;
 import com.fairhand.supernotepad.util.Logger;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import java.util.List;
 public class DrawView extends View implements PointView.OnPaintStyleChanged {
     
     private Paint mPaint;
+    private Paint mShapePaint;
     private Path mPath;
     
     private Bitmap mBufferBitmap;
@@ -42,7 +43,6 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
      * 最大保存步数
      */
     private static final int MAX_CACHE_STEP = 24;
-    
     /**
      * 存放画的每一笔
      */
@@ -55,16 +55,16 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
     private Xfermode mXfermodeClear;
     private Xfermode mXfermodeDraw;
     
-    private boolean mCanEraser;
-    
     private Callback mCallback;
-    
     private GestureDetector mGestureDetector;
     
+    private boolean mCanEraser;
     public int mEraserSize = 5;
-    
     private float mWidth;
     private float mHeight;
+    
+    private Rect mCurrentRect;
+    private List<Rect> rects = new ArrayList<>();
     
     /**
      * 模式
@@ -78,6 +78,10 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
          * 橡皮擦模式
          */
         ERASER,
+        /**
+         * 形状绘图
+         */
+        SHAPE,
         /**
          * 什么也不是
          */
@@ -148,6 +152,9 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
         mXfermodeClear = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
         mPaint.setXfermode(mXfermodeDraw);
         
+        mShapePaint = new Paint();
+        mShapePaint.setColor(0x22ff0000);
+        
         // 设置手势监听
         mGestureDetector = new GestureDetector(getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
@@ -171,15 +178,6 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
     private void initBuffer() {
         mBufferBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         mBufferCanvas = new Canvas(mBufferBitmap);
-    }
-    
-    /**
-     * 设置背景图
-     */
-    public void setBuffer(String path) {
-        mBufferBitmap = BitmapFactory.decodeFile(path).copy(Bitmap.Config.ARGB_8888, true);
-        mBufferCanvas = new Canvas(mBufferBitmap);
-        invalidate();
     }
     
     /**
@@ -207,19 +205,6 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
         backgroundBitmap = Bitmap.createBitmap(backgroundBitmap, 0, 0, (int) width, (int) height, matrix, true);
         Logger.d("屏幕中心：" + getPivotX() + ", " + getPivotY());
         matrix.reset();
-        invalidate();
-    }
-    
-    /**
-     * 贴纸
-     */
-    private Bitmap stickerBitmap;
-    
-    /**
-     * 设置贴纸
-     */
-    public void setSticker(ImageView imageView) {
-        stickerBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         invalidate();
     }
     
@@ -319,9 +304,11 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
         if (mDrawingList != null) {
             // 把bitmap擦成透明的
             // 以便重绘
-            mBufferBitmap.eraseColor(Color.TRANSPARENT);
-            for (AbstractDrawingInfo drawingInfo : mDrawingList) {
-                drawingInfo.draw(mBufferCanvas);
+            if (mBufferBitmap != null) {
+                mBufferBitmap.eraseColor(Color.TRANSPARENT);
+                for (AbstractDrawingInfo drawingInfo : mDrawingList) {
+                    drawingInfo.draw(mBufferCanvas);
+                }
             }
             invalidate();
         }
@@ -389,11 +376,16 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        
+        for (Rect rect : rects) {
+            float left = Math.min(rect.getmOrigin().x, rect.getmCurrent().x);
+            float right = Math.max(rect.getmOrigin().x, rect.getmCurrent().x);
+            float top = Math.min(rect.getmOrigin().y, rect.getmCurrent().y);
+            float bottom = Math.max(rect.getmOrigin().y, rect.getmCurrent().y);
+            canvas.drawRect(left, top, right, bottom, mShapePaint);
+        }
         if (backgroundBitmap != null) {
             canvas.drawBitmap(backgroundBitmap, 0, 320, null);
-        }
-        if (stickerBitmap != null) {
-            canvas.drawBitmap(stickerBitmap, 320, 320, null);
         }
         if (mBufferBitmap != null) {
             canvas.drawBitmap(mBufferBitmap, 0, 0, null);
@@ -411,44 +403,65 @@ public class DrawView extends View implements PointView.OnPaintStyleChanged {
     public boolean onTouchEvent(MotionEvent event) {
         // 将手势监听传给Detector
         mGestureDetector.onTouchEvent(event);
+        
+        PointF pointF = new PointF(event.getX(), event.getY());
         if (!isEnabled()) {
             return false;
         }
-        final int action = event.getActionMasked();
         if (currentMode != MODE.NULL) {
-            switch (action) {
+            switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     startX = event.getX();
                     startY = event.getY();
-                    if (mPath == null) {
-                        mPath = new Path();
+                    if (currentMode == MODE.SHAPE) {
+                        mCurrentRect = new Rect(pointF);
+                        rects.add(mCurrentRect);
+                    } else {
+                        if (mPath == null) {
+                            mPath = new Path();
+                        }
+                        mPath.moveTo(startX, startY);
                     }
-                    mPath.moveTo(startX, startY);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    float endX = event.getX();
-                    float endY = event.getY();
-                    // 这里终点设为两点的中心点的目的在于使绘制的曲线更平滑
-                    // 如果终点直接设置为x,y，效果和lineto是一样的,实际是折线效果
-                    mPath.quadTo(startX, startY, (startX + endX) / 2, (startY + endY) / 2);
-                    if (mBufferBitmap == null) {
-                        initBuffer();
+                    if (currentMode == MODE.SHAPE) {
+                        if (mCurrentRect != null) {
+                            mCurrentRect.setmCurrent(pointF);
+                            invalidate();
+                        }
+                    } else {
+                        float endX = event.getX();
+                        float endY = event.getY();
+                        // 这里终点设为两点的中心点的目的在于使绘制的曲线更平滑
+                        // 如果终点直接设置为x,y，效果和lineto是一样的,实际是折线效果
+                        // 参数（控制点坐标，终点坐标）
+                        mPath.quadTo(startX, startY, (startX + endX) / 2, (startY + endY) / 2);
+                        if (mBufferBitmap == null) {
+                            initBuffer();
+                        }
+                        // 擦除模式下，画布中没有图画，并且不可擦除，不做任何操作
+                        if (currentMode == MODE.ERASER && !mCanEraser) {
+                            break;
+                        }
+                        mBufferCanvas.drawPath(mPath, mPaint);
+                        invalidate();
+                        startX = endX;
+                        startY = endY;
                     }
-                    // 擦除模式下，画布中没有图画，并且不可擦除，不做任何操作
-                    if (currentMode == MODE.ERASER && !mCanEraser) {
-                        break;
-                    }
-                    mBufferCanvas.drawPath(mPath, mPaint);
-                    invalidate();
-                    startX = endX;
-                    startY = endY;
                     break;
                 case MotionEvent.ACTION_UP:
                     performClick();
-                    if (currentMode == MODE.DRAW || mCanEraser) {
-                        saveDrawingPath();
+                    if (currentMode == MODE.SHAPE) {
+                        mCurrentRect = null;
+                    } else {
+                        if (currentMode == MODE.DRAW || mCanEraser) {
+                            saveDrawingPath();
+                        }
+                        mPath.reset();
                     }
-                    mPath.reset();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    mCurrentRect = null;
                     break;
                 default:
                     break;

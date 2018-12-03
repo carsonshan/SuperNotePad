@@ -65,7 +65,7 @@ public class ItemView extends LinearLayout {
     private View divideLine;
     
     public ItemView(Context context) {
-        super(context);
+        this(context, null);
     }
     
     public ItemView(Context context, @Nullable AttributeSet attrs) {
@@ -126,13 +126,6 @@ public class ItemView extends LinearLayout {
      */
     public void setRightText(String rightText) {
         tvRightText.setText(rightText);
-    }
-    
-    /**
-     * 获取右边文本
-     */
-    public String getRightText() {
-        return tvRightText.getText().toString();
     }
     
 }

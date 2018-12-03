@@ -1,22 +1,21 @@
 package com.fairhand.supernotepad.activity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fairhand.supernotepad.R;
@@ -29,41 +28,39 @@ import com.fairhand.supernotepad.entity.Card;
 import com.fairhand.supernotepad.entity.Note;
 import com.fairhand.supernotepad.entity.RealmNote;
 import com.fairhand.supernotepad.entity.RealmSecretNote;
+import com.fairhand.supernotepad.fragment.PlayRecordingFragment;
 import com.fairhand.supernotepad.puzzle.affix.PhotoAffixNoteActivity;
 import com.fairhand.supernotepad.recording.view.RecordNoteActivity;
-import com.fairhand.supernotepad.util.CacheUtil;
 import com.fairhand.supernotepad.util.Logger;
 import com.fairhand.supernotepad.util.Toaster;
 import com.fairhand.supernotepad.video.view.VideoNoteActivity;
 import com.fairhand.supernotepad.view.DiyCommonDialog;
 import com.fairhand.supernotepad.view.DiyInputDialog;
+import com.fairhand.supernotepad.view.DiyObserveCommonDialog;
+import com.fairhand.supernotepad.view.DiyObservePictureDialog;
 import com.fairhand.supernotepad.view.DiyObservePuzzleDialog;
 import com.fairhand.supernotepad.view.ItemView;
 import com.fairhand.supernotepad.view.SlideDragView;
+import com.zyyoona7.popup.EasyPopup;
+import com.zyyoona7.popup.XGravity;
+import com.zyyoona7.popup.YGravity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 /**
- * 程序主界面
+ * MAIN_MAIN_MAIN_MAIN_MAIN_MAIN_MAIN_MAIN_MAIN_MAIN
  *
  * @author FairHand
  * @date 2018/10/29
  */
 public class MainActivity extends AppCompatActivity implements OnClickListener, UpdateNote {
-    
-    /**
-     * Intent传值key
-     */
-    public static final String KEY_NOTE_TITLE = "KEY_NOTE_TITLE";
-    public static final String KEY_NOTE_CONTENT = "KEY_NOTE_CONTENT";
-    public static final String KEY_NOTE_PICTURES = "KEY_NOTE_PICTURES";
     
     @BindView(R.id.grid_view_card)
     GridView mGridViewCard;
@@ -81,24 +78,24 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     TextView tvNoteNon;
     @BindView(R.id.tv_user_account)
     TextView tvUserAccount;
-    @BindView(R.id.iv_exit_app)
-    ImageView ivExitApp;
+    @BindView(R.id.iv_avatar_main)
+    ImageView ivAvatar;
     @BindView(R.id.slide_drag_view)
     SlideDragView slideDragView;
     @BindView(R.id.iv_note_pad)
     ItemView ivNotePad;
+    @BindView(R.id.iv_arrange)
+    ImageView ivArrange;
+    @BindView(R.id.rl_top_tool)
+    RelativeLayout rlTopTool;
     
     private Realm mRealm;
     
     private ShowNoteAdapter adapter;
-    
     /**
      * 备份所有的记事
      */
     private ArrayList<Note> backupNotes = new ArrayList<>();
-    
-    private int locationFromDatabase;
-    
     private ArrayList<Note> notes = new ArrayList<>();
     
     /**
@@ -106,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      */
     private Card[] cardArray = {
             new Card("普通记事", R.drawable.iv_common_note),
-            new Card("手绘记事", R.drawable.iv_hand_paint),
+            new Card("手绘记事", R.drawable.ic_paint),
             new Card("事件记事", R.drawable.iv_affair_note),
             new Card("照片记事", R.drawable.iv_pictures)
     };
@@ -115,9 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        smoothSwitchScreen();
         setContentView(R.layout.activity_main);
-        translucentBar();
         ButterKnife.bind(this);
         // 获取Realm实例
         mRealm = Realm.getDefaultInstance();
@@ -136,43 +131,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         // 关闭Realm
         mRealm.close();
         super.onDestroy();
-    }
-    
-    /**
-     * 全屏切换到非全屏的闪屏问题
-     */
-    private void smoothSwitchScreen() {
-        ViewGroup rootView = findViewById(android.R.id.content);
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        int statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-        rootView.setPadding(0, statusBarHeight, 0, 0);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-    }
-    
-    /**
-     * 状态栏变色处理
-     */
-    public void translucentBar() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        // 获取状态栏高度
-        int resourceId = getResources().getIdentifier("status_bar_height",
-                "dimen", "android");
-        int statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-        // 绘制一个和状态栏一样高的矩形，并添加到视图中
-        View rectView = new View(this);
-        LinearLayout.LayoutParams params
-                = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight);
-        rectView.setLayoutParams(params);
-        rectView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorItem));
-        // 添加矩形View到布局中
-        ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
-        decorView.addView(rectView);
-        // 设置根布局的参数
-        ViewGroup rootView
-                = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
-        rootView.setFitsSystemWindows(true);
-        rootView.setClipToPadding(true);
     }
     
     /**
@@ -217,21 +175,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         adapter.updateData(notes);
         if (realmNotes.size() > 0) {
             tvNoteNon.setVisibility(View.GONE);
-            locationFromDatabase = 0;
             // 有数据
             for (RealmSecretNote item : realmNotes) {
                 Logger.d("标题------------" + item.getNoteTitle());
                 Note note = new Note();
-                note.setKey(item.getKey());
+                note.setKind(item.getKind());
                 note.setNoteTitle(item.getNoteTitle());
                 note.setNoteContent(item.getNoteContent());
                 note.setNoteTime(item.getNoteTime());
                 ArrayList<String> data = new ArrayList<>(item.getPictureIds());
                 note.setPictureIds(data);
                 note.setVideoPath(item.getVideoPath());
-                note.setLocationFromDatabase(locationFromDatabase++);
                 // 获取类型
-                int key = item.getKey();
+                int key = item.getKind();
                 // 根据类型加载不同图片
                 switch (key) {
                     // 普通记事(加载默认图片)
@@ -240,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         break;
                     // 录音记事(加载默认图片)
                     case Config.TYPE_RECORDING:
-                        note.setNoteImageId(R.drawable.iv_recording);
+                        note.setNoteImageId(R.drawable.ic_record);
                         // 录音文件地址
                         note.setRecordingPath(item.getRecordingPath());
                         break;
@@ -276,10 +232,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         if (realmNotes.size() > 0) {
             tvNoteNon.setVisibility(View.GONE);
             // 有数据
-            locationFromDatabase = 0;
             for (RealmNote item : realmNotes) {
                 Logger.d("标题------------" + item.getNoteTitle());
                 Note note = new Note();
+                note.setKind(item.getKind());
                 note.setKey(item.getKey());
                 note.setNoteTitle(item.getNoteTitle());
                 note.setNoteContent(item.getNoteContent());
@@ -287,9 +243,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 ArrayList<String> data = new ArrayList<>(item.getPictureIds());
                 note.setPictureIds(data);
                 note.setVideoPath(item.getVideoPath());
-                note.setLocationFromDatabase(locationFromDatabase++);
                 // 获取类型
-                int key = item.getKey();
+                int key = item.getKind();
                 // 根据类型加载不同图片
                 switch (key) {
                     // 普通记事(加载默认图片)
@@ -298,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         break;
                     // 录音记事(加载默认图片)
                     case Config.TYPE_RECORDING:
-                        note.setNoteImageId(R.drawable.iv_recording);
+                        note.setNoteImageId(R.drawable.ic_record);
                         // 录音文件地址
                         note.setRecordingPath(item.getRecordingPath());
                         break;
@@ -326,57 +281,36 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         adapter.updateData(notes);
         mGridViewNote.setAdapter(adapter);
         mGridViewNote.setOnItemLongClickListener((parent, view, position, id) -> {
-            delete(notes.get(position).getLocationFromDatabase(), position);
+            delete(position);
             // 返回true消费掉此事件
             return true;
         });
         mGridViewNote.setOnItemClickListener((parent, view, position, id) -> {
             // 获取到记事类型关键字
             Note note = notes.get(position);
-            int key = note.getKey();
+            int key = note.getKind();
             switch (key) {
                 case Config.TYPE_COMMON:
                     // 普通记事
-                    Intent intentToCommon = new Intent(getApplicationContext(), CommonNoteActivity.class);
-                    commonParam(note, intentToCommon);
-                    startActivity(intentToCommon);
-                    break;
-                case Config.TYPE_HAND_PAINT:
-                    // 手绘记事
-                    Intent intent = new Intent(getApplicationContext(), HandPaintNoteActivity.class);
-                    intent.putExtra(KEY_NOTE_TITLE, note.getNoteTitle());
-                    intent.putExtra(KEY_NOTE_PICTURES, note.getNoteImagePath());
-                    intent.putExtra(Config.KEY_FROM_READ, 1);
-                    startActivity(intent);
+                    observeCommonNote(note);
                     break;
                 case Config.TYPE_PICTURE:
                     // 照片记事
-                    Intent intentToPicture = new Intent(getApplicationContext(), PictureNoteActivity.class);
-                    commonParam(note, intentToPicture);
-                    intentToPicture.putStringArrayListExtra(KEY_NOTE_PICTURES, (ArrayList<String>) note.getPictureIds());
-                    startActivity(intentToPicture);
+                    observePictureNote(note);
                     break;
                 case Config.TYPE_RECORDING:
                     // 录音记事
-                    startPlaying(notes.get(position).getRecordingPath());
+                    observeRecordingNote(note);
                     break;
                 case Config.TYPE_VIDEO:
                     // 摄像记事
-                    Intent intentToPlayVideo = new Intent(getApplicationContext(), PlayVideoActivity.class);
-                    intentToPlayVideo.putExtra("name", note.getNoteTitle());
-                    intentToPlayVideo.putExtra("videoPath", note.getVideoPath());
-                    startActivity(intentToPlayVideo);
+                    observeVideoNote(note);
                     break;
-                case Config.TYPE_PUZZLE:
+                case Config.TYPE_HAND_PAINT:
+                    // 手绘记事
+                case Config.TYPE_AFFIX:
                     // 拼图记事
-                    DiyObservePuzzleDialog dialog = new DiyObservePuzzleDialog(this, R.style.DiyDialogStyle);
-                    Bitmap bitmap = BitmapFactory.decodeFile(note.getNoteImagePath());
-                    dialog.setTvContentShow(note.getNoteTitle())
-                            .setIvPhotoShow(bitmap)
-                            .show();
-                    break;
-                case Config.TYPE_AFFAIR:
-                    // 事务记事
+                    observeImageNote(note);
                     break;
                 default:
                     break;
@@ -384,55 +318,45 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         });
     }
     
-    private MediaPlayer mMediaPlayer;
-    
-    /**
-     * 播放录音文件
-     */
-    private void startPlaying(String filePath) {
-        Toaster.showShort(this, "开始播放");
-        mMediaPlayer = new MediaPlayer();
-        try {
-            // 设置播放源
-            mMediaPlayer.setDataSource(filePath);
-            // 播放器进入准备状态
-            mMediaPlayer.prepare();
-            mMediaPlayer.setOnPreparedListener(mp -> {
-                // 准备完了开始播放
-                mMediaPlayer.start();
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 播放完成监听
-        mMediaPlayer.setOnCompletionListener(mp -> stopPlaying());
+    private void observePictureNote(Note note) {
+        DiyObservePictureDialog dialog = new DiyObservePictureDialog(this, R.style.DiyDialogStyle);
+        dialog.setTvTitle(note.getNoteTitle())
+                .setContent(note.getNoteContent())
+                .setPictureData(note.getPictureIds())
+                .show();
     }
     
-    /**
-     * 停止播放
-     */
-    private void stopPlaying() {
-        // 释放掉MediaPlayer
-        mMediaPlayer.stop();
-        mMediaPlayer.reset();
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-        Toaster.showShort(this, "播放完成");
+    private void observeVideoNote(Note note) {
+        Intent intentToPlayVideo = new Intent(getApplicationContext(), PlayVideoActivity.class);
+        intentToPlayVideo.putExtra("name", note.getNoteTitle());
+        intentToPlayVideo.putExtra("videoPath", note.getVideoPath());
+        startActivity(intentToPlayVideo);
     }
     
-    /**
-     * 通用传参
-     */
-    private void commonParam(Note note, Intent intent) {
-        intent.putExtra(KEY_NOTE_TITLE, note.getNoteTitle());
-        intent.putExtra(KEY_NOTE_CONTENT, note.getNoteContent());
-        intent.putExtra(Config.KEY_FROM_READ, 1);
+    private void observeImageNote(Note note) {
+        DiyObservePuzzleDialog dialog = new DiyObservePuzzleDialog(this, R.style.DiyDialogStyle);
+        Bitmap bitmap = BitmapFactory.decodeFile(note.getNoteImagePath());
+        dialog.setTvContentShow(note.getNoteTitle())
+                .setIvPhotoShow(bitmap)
+                .show();
+    }
+    
+    private void observeCommonNote(Note note) {
+        DiyObserveCommonDialog dialog = new DiyObserveCommonDialog(this, R.style.DiyDialogStyle);
+        dialog.setTvTitle(note.getNoteTitle())
+                .setContent(note.getNoteContent())
+                .show();
+    }
+    
+    private void observeRecordingNote(Note note) {
+        PlayRecordingFragment fragment = PlayRecordingFragment.newInstance(note);
+        fragment.show(getSupportFragmentManager(), "recording");
     }
     
     /**
      * 删除
      */
-    private void delete(int location, int position) {
+    private void delete(int position) {
         // 打开提示对话框询问是否删除
         DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
         dialog.setCancelable(false);
@@ -440,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 .setMessage("确认删除？")
                 .setOnPositiveClickedListener("删除", v -> {
                     dialog.dismiss();
-                    handleDelete(location, position);
+                    handleDelete(position);
                     Toaster.showShort(getApplicationContext(), "删除成功");
                 })
                 .setOnNegativeClickListener("不了", v -> dialog.dismiss())
@@ -448,54 +372,53 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
     
     /**
-     * 处理删除
-     *
-     * @param location 数据在数据库中的位置
-     * @param position 在GridView的位置
+     * 难      受      的      不      得
      */
-    private void handleDelete(int location, int position) {
-        Logger.d("位置", "数据库中：" + location);
-        Logger.d("位置", "GridView中：" + position);
+    private void helpless(RealmObject object) {
+        if (object == null) {
+            Toaster.showShort(MainActivity.this, "删除失败了");
+        } else {
+            mRealm.executeTransaction(realm -> object.deleteFromRealm());
+            Toaster.showShort(MainActivity.this, "事件已删除");
+        }
+    }
+    
+    /**
+     * 处理删除
+     */
+    private void handleDelete(int position) {
         if (Config.currentPad.equals(Config.DEFAULT_PAD)) {
             // 先查询数据
-            RealmResults<RealmNote> realmNotes = mRealm.where(RealmNote.class).findAll();
+            RealmNote realmNote = mRealm.where(RealmNote.class).equalTo("key", notes.get(position).getKey()).findFirst();
             // 再执行删除操作
-            mRealm.executeTransaction(realm -> realmNotes.deleteFromRealm(location));
+            helpless(realmNote);
         } else if (Config.currentPad.equals(Config.SECRET_PAD)) {
             // 先查询数据
-            RealmResults<RealmSecretNote> realmNotes = mRealm.where(RealmSecretNote.class).findAll();
+            RealmSecretNote realmNote = mRealm.where(RealmSecretNote.class).equalTo("key", notes.get(position).getKey()).findFirst();
             // 再执行删除操作
-            mRealm.executeTransaction(realm -> realmNotes.deleteFromRealm(location));
+            helpless(realmNote);
         }
         // 移除选中item并通知刷新界面
         backupNotes.remove(position);
         notes.remove(position);
         adapter.updateData(notes);
         ivAllNote.setRightText(notes.size() + "");
-        updateLocationFromDatabase();
-    }
-    
-    /**
-     * 更新数据在数据库中的位置
-     */
-    private void updateLocationFromDatabase() {
-        locationFromDatabase = 0;
-        for (Note note : notes) {
-            note.setLocationFromDatabase(locationFromDatabase++);
-        }
+        showOrHideTip();
     }
     
     /**
      * 初始化数据
      */
     private void initData() {
-        tvUserAccount.setText(TextUtils.isEmpty(Config.userAccount) ? "游客体验" : Config.userAccount);
+        tvUserAccount.setText(Config.isTourist ? "游客" : Config.user.getNickName());
         
         ivAllNote.setOnClickListener(this);
         ivNotePad.setOnClickListener(this);
         ivNoteKind.setOnClickListener(this);
         ivSearch.setOnClickListener(this);
-        ivExitApp.setOnClickListener(this);
+        tvUserAccount.setOnClickListener(this);
+        ivAvatar.setOnClickListener(this);
+        ivArrange.setOnClickListener(this);
         
         CommonNoteActivity.setCallBack(this);
         PictureNoteActivity.setCallBack(this);
@@ -510,10 +433,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                tvNoteNon.setVisibility(View.GONE);
                 // 有数据的情况下才选
                 if (adapter != null) {
-                    tvNoteNon.setVisibility(View.GONE);
                     // 选择下拉框列表项的操作
                     switch (position) {
                         // 所有记事
@@ -522,26 +443,27 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                             break;
                         // 普通记事
                         case 1:
-                            pickCommonNote();
+                            pickNote(Config.TYPE_COMMON);
                             break;
                         // 手绘记事
                         case 2:
-                            pickHandPaintNote();
+                            pickNote(Config.TYPE_HAND_PAINT);
                             break;
                         // 照片记事
                         case 3:
-                            pickPictureNote();
+                            pickNote(Config.TYPE_PICTURE);
                             break;
                         // 拍摄记事
                         case 4:
-                            pickVideoNote();
+                            pickNote(Config.TYPE_VIDEO);
                             break;
                         // 录音记事
                         case 5:
-                            pickRecordNote();
+                            pickNote(Config.TYPE_RECORDING);
                             break;
                         // 拼图记事
                         case 6:
+                            pickNote(Config.TYPE_AFFIX);
                             pickAffixNote();
                             break;
                         default:
@@ -560,88 +482,29 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
     
     /**
+     * 分类选择
+     *
+     * @param noteKind 要选择的记事类型
+     */
+    private void pickNote(int noteKind) {
+        notes.clear();
+        for (Note note : backupNotes) {
+            if (note.getKind() == noteKind) {
+                notes.add(note);
+            }
+        }
+        adapter.updateData(notes);
+        showOrHideTip();
+    }
+    
+    /**
      * 选择分类（拼图记事）
      */
     private void pickAffixNote() {
         notes.clear();
         for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_PUZZLE) {
+            if (note.getKind() == Config.TYPE_AFFIX) {
                 // 拼图记事，加入
-                notes.add(note);
-            }
-        }
-        adapter.updateData(notes);
-        showOrHideTip();
-    }
-    
-    /**
-     * 选择分类（录音记事）
-     */
-    private void pickRecordNote() {
-        notes.clear();
-        for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_RECORDING) {
-                // 拍摄记事，加入
-                notes.add(note);
-            }
-        }
-        adapter.updateData(notes);
-        showOrHideTip();
-    }
-    
-    /**
-     * 选择分类（拍摄记事）
-     */
-    private void pickVideoNote() {
-        notes.clear();
-        for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_VIDEO) {
-                // 拍摄记事，加入
-                notes.add(note);
-            }
-        }
-        adapter.updateData(notes);
-        showOrHideTip();
-    }
-    
-    /**
-     * 选择分类（照片记事）
-     */
-    private void pickPictureNote() {
-        notes.clear();
-        for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_PICTURE) {
-                // 照片记事，加入
-                notes.add(note);
-            }
-        }
-        adapter.updateData(notes);
-        showOrHideTip();
-    }
-    
-    /**
-     * 选择分类（手绘记事）
-     */
-    private void pickHandPaintNote() {
-        notes.clear();
-        for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_HAND_PAINT) {
-                // 手绘记事，加入
-                notes.add(note);
-            }
-        }
-        adapter.updateData(notes);
-        showOrHideTip();
-    }
-    
-    /**
-     * 选择分类（普通记事）
-     */
-    private void pickCommonNote() {
-        notes.clear();
-        for (Note note : backupNotes) {
-            if (note.getKey() == Config.TYPE_COMMON) {
-                // 普通记事，加入
                 notes.add(note);
             }
         }
@@ -687,33 +550,59 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             case R.id.iv_search:
                 search();
                 break;
-            // 退出
-            case R.id.iv_exit_app:
-                exit();
+            // 跳转个人中心
+            case R.id.iv_avatar_main:
+            case R.id.tv_user_account:
+                startActivity(new Intent(MainActivity.this, PersonalCenterActivity.class),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                                this,
+                                new Pair<>(ivAvatar, "share_avatar"),
+                                new Pair<>(tvUserAccount, "share_nickname")
+                        ).toBundle());
+                break;
+            // 更换排列方式
+            case R.id.iv_arrange:
+                showAllArrange();
                 break;
             default:
                 break;
         }
     }
     
+    private void showAllArrange() {
+        EasyPopup mEasyPopup = EasyPopup.create(this)
+                                       .setContentView(R.layout.popup_window_show_arrange_way)
+                                       .setFocusAndOutsideEnable(true)
+                                       .setBackgroundDimEnable(true)
+                                       .setDimValue(.4f)
+                                       .setDimColor(ContextCompat.getColor(this, R.color.colorDim))
+                                       .apply();
+        // 设置显示位置
+        mEasyPopup.showAtAnchorView(rlTopTool, YGravity.BELOW, XGravity.ALIGN_RIGHT, 24, 24);
+        ItemView grid = mEasyPopup.findViewById(R.id.iv_arrange_grid);
+        ItemView timeline = mEasyPopup.findViewById(R.id.iv_arrange_timeline);
+        grid.setOnClickListener(v -> {
+            mEasyPopup.dismiss();
+            changeArrange(0);
+        });
+        timeline.setOnClickListener(v -> {
+            mEasyPopup.dismiss();
+            changeArrange(1);
+        });
+    }
+    
     /**
-     * 退出程序
+     * 切换布局
      */
-    private void exit() {
-        DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
-        dialog.setCancelable(false);
-        dialog.setTitle("提示")
-                .setMessage("确认退出？")
-                .setOnPositiveClickedListener("确认", v -> {
-                    startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
-                    CacheUtil.putLoginYet(getApplicationContext(), false);
-                    CacheUtil.putUser(getApplicationContext(), "");
-                    Config.isLogin = false;
-                    finish();
-                    dialog.dismiss();
-                })
-                .setOnNegativeClickListener("取消", v -> dialog.dismiss())
-                .show();
+    private void changeArrange(int witchArrange) {
+        switch (witchArrange) {
+            case 0:
+                break;
+            case 1:
+                break;
+            default:
+                break;
+        }
     }
     
     /**

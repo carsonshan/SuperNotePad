@@ -1,8 +1,8 @@
 package com.fairhand.supernotepad.app;
 
 import android.app.Application;
-import android.util.Log;
 
+import com.fairhand.supernotepad.http.entity.User;
 import com.fairhand.supernotepad.util.CacheUtil;
 import com.mob.MobSDK;
 
@@ -20,7 +20,9 @@ import io.realm.RealmConfiguration;
  */
 public class Config extends Application {
     
-    public static final boolean IS_DEBUG = false;
+    public static User user;
+    
+    public static final boolean IS_DEBUG = true;
     
     /**
      * 私密密码
@@ -47,35 +49,26 @@ public class Config extends Application {
      */
     public static final int TYPE_HAND_PAINT = 1;
     /**
-     * 记事类型(事项)
-     */
-    public static final int TYPE_AFFAIR = 2;
-    /**
      * 记事类型(照片)
      */
-    public static final int TYPE_PICTURE = 3;
+    public static final int TYPE_PICTURE = 2;
     /**
      * 记事类型(录音)
      */
-    public static final int TYPE_RECORDING = 4;
+    public static final int TYPE_RECORDING = 3;
     /**
      * 记事类型(拼图)
      */
-    public static final int TYPE_PUZZLE = 5;
+    public static final int TYPE_AFFIX = 4;
     /**
      * 记事类型(摄像)
      */
-    public static final int TYPE_VIDEO = 6;
+    public static final int TYPE_VIDEO = 5;
     
     /**
-     * 用户账号
+     * 判断是否为游客登陆
      */
-    public static String userAccount;
-    
-    /**
-     * 判断是否已登录
-     */
-    public static boolean isLogin;
+    public static boolean isTourist;
     
     /**
      * 判断是否第一次使用
@@ -84,31 +77,15 @@ public class Config extends Application {
     
     // private static final String ALI_IP = "47.107.98.198:80";
     
-    // private static final String IP = "192.168.43.158:80";
-    
     /**
-     * 测试用IP
+     * 本地服务器IP
      */
-    private static final String MY_TEST_IP = "172.29.27.141:8080";
+    private static final String MY_TEST_IP = "192.168.1.102:8080";
     
     /**
      * BASE_URL
      */
-    public static final String BASE_URL = "http://" + MY_TEST_IP + "/user/";
-    
-    /**
-     * SharedPreferences保存是否已登录的KEY
-     */
-    public static final String KEY_IS_LOGIN = "KEY_IS_LOGIN";
-    /**
-     * 保存是否已登录的SharedPreferences
-     */
-    public static final String SAVE_IS_LOGIN = "SAVE_IS_LOGIN";
-    
-    /**
-     * 判断是否是查看保存的记录
-     */
-    public static final String KEY_FROM_READ = "KEY_FROM_READ";
+    public static final String BASE_URL = "http://" + MY_TEST_IP + "/";
     
     /**
      * 手绘记事保存文件夹
@@ -133,10 +110,8 @@ public class Config extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("Config测试", "外线程：" + Thread.currentThread());
         // 初始化MobSDK
         MobSDK.init(this);
-        Log.d("Config测试", "内线程：" + Thread.currentThread());
         // 初始化Realm数据库框架
         Realm.init(this);
         // DIY配置Realm
@@ -149,14 +124,15 @@ public class Config extends Application {
                                                       .build();
         // 设置DIY配置为默认的配置
         Realm.setDefaultConfiguration(diyConfiguration);
+        Realm realm = Realm.getDefaultInstance();
         
         initFile();
         
-        // 获取用户是否已登录
-        isLogin = CacheUtil.isLoginYet(this);
-        // 获取用户名
-        userAccount = CacheUtil.getUser(this);
-        // 获取密码
+        // 获取当前用户
+        user = realm.where(User.class).findFirst();
+        // 获取当前是否为游客登录
+        isTourist = CacheUtil.isTouristYet(this);
+        // 获取私密密码
         mSecret = CacheUtil.getPassword(this);
         // 获取当前记事本
         currentPad = CacheUtil.getCurrentPad(this);

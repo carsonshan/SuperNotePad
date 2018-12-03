@@ -8,7 +8,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_format_paint_white_48dp" />
+            android:src="@drawable/ic_app_icon" />
     </item>
 
 </layer-list>

@@ -173,6 +173,16 @@
             android:name=".affair.AffairDetailActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <!-- 个人中心 -->
+        <activity
+            android:name=".activity.PersonalCenterActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <!-- 设置 -->
+        <activity
+            android:name=".activity.SettingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

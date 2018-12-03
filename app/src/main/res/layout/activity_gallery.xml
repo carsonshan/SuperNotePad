@@ -11,4 +11,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="center" />
 
+    <com.fairhand.supernotepad.view.NumberIndicator
+        android:id="@+id/number_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
 </FrameLayout>

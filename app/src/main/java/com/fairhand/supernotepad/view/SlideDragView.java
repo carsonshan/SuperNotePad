@@ -106,9 +106,9 @@ public class SlideDragView extends FrameLayout {
      * 返回主视图
      */
     public void backMainView() {
-        // mLeftView放在负一屏中
-        mLeftView.layout(-mWidth, 0, 0, mHeight);
-        mMainView.layout(0, 0, mWidth, mHeight);
+        mDragHelper.smoothSlideViewTo(mLeftView, -mWidth, 0);
+        mDragHelper.smoothSlideViewTo(mMainView, 0, 0);
+        ViewCompat.postInvalidateOnAnimation(SlideDragView.this);
     }
     
     /**

@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         if (Config.isFirstUse) {
             startActivity(new Intent(SplashActivity.this, GuideActivity.class));
         } else {
-            if (Config.isLogin) {
+            if (Config.user != null || Config.isTourist) {
                 // 已登录
                 if (Config.currentPad.equals(Config.SECRET_PAD)) {
                     // 私密记事，打开锁

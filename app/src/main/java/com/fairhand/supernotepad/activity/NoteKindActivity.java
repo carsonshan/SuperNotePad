@@ -47,10 +47,10 @@ public class NoteKindActivity extends AppCompatActivity {
      */
     private Card[] cardArray = {
             new Card("普通记事", R.drawable.iv_common_note),
-            new Card("手绘记事", R.drawable.iv_hand_paint),
+            new Card("手绘记事", R.drawable.ic_paint),
             new Card("事件记事", R.drawable.iv_affair_note),
             new Card("照片记事", R.drawable.iv_pictures),
-            new Card("录音记事", R.drawable.iv_recording),
+            new Card("录音记事", R.drawable.ic_record),
             new Card("拼图记事", R.drawable.iv_affix),
             new Card("摄像记事", R.drawable.iv_video_note)
     };

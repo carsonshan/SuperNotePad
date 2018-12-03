@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/btn_confirm"
-            android:textColor="@color/colorSpecialBlack"
+            android:textColor="#F5F7FA"
             android:textSize="15sp"
             android:textStyle="bold" />
 

@@ -82,7 +82,6 @@ public class HandPaintNoteActivity extends AppCompatActivity
         ButterKnife.bind(this);
         mRealm = Realm.getDefaultInstance();
         
-        initView();
         initTab();
         initData();
         setListener();
@@ -114,10 +113,9 @@ public class HandPaintNoteActivity extends AppCompatActivity
                     case 1:
                         mDrawView.setMode(DrawView.MODE.ERASER);
                         break;
-                    // 贴纸
+                    // 形状
                     case 2:
-                        showStickerDialog();
-                        mDrawView.setMode(DrawView.MODE.NULL);
+                        mDrawView.setMode(DrawView.MODE.SHAPE);
                         break;
                     // 插图
                     case 3:
@@ -152,10 +150,10 @@ public class HandPaintNoteActivity extends AppCompatActivity
                         mDrawView.setMode(DrawView.MODE.ERASER);
                         showPopupWindow();
                         break;
-                    // 贴纸
+                    // 形状
                     case 2:
-                        showStickerDialog();
-                        mDrawView.setMode(DrawView.MODE.NULL);
+                        showShapeDialog();
+                        mDrawView.setMode(DrawView.MODE.SHAPE);
                         break;
                     // 插图
                     case 3:
@@ -201,12 +199,20 @@ public class HandPaintNoteActivity extends AppCompatActivity
     }
     
     /**
-     * 贴纸对话框
+     * 形状对话框
      */
-    private void showStickerDialog() {
-        ImageView imageView = new ImageView(this);
-        imageView.setImageResource(R.drawable.ic_camera);
-        mDrawView.setSticker(imageView);
+    private void showShapeDialog() {
+        EasyPopup mEasyPopup = EasyPopup.create(this)
+                                       .setContentView(R.layout.popup_window_shpae)
+                                       .setFocusAndOutsideEnable(true)
+                                       .setBackgroundDimEnable(true)
+                                       .setDimValue(.4f)
+                                       .setDimColor(ContextCompat.getColor(this, R.color.colorDim))
+                                       .apply();
+        
+        mEasyPopup.showAtAnchorView(tabLayout, YGravity.BELOW, XGravity.CENTER, 24, 24);
+        ImageView rect = mEasyPopup.findViewById(R.id.iv_shape_rect);
+        rect.setOnClickListener(v -> mEasyPopup.dismiss());
     }
     
     /**
@@ -243,36 +249,16 @@ public class HandPaintNoteActivity extends AppCompatActivity
         // 添加TabItem
         tabLayout.addTab(tabLayout.newTab().setText("画笔").setIcon(R.drawable.ic_pen), true);
         tabLayout.addTab(tabLayout.newTab().setText("橡皮").setIcon(R.drawable.ic_eraser));
-        tabLayout.addTab(tabLayout.newTab().setText("贴纸").setIcon(R.drawable.ic_sticker));
+        tabLayout.addTab(tabLayout.newTab().setText("形状").setIcon(R.drawable.ic_shape));
         tabLayout.addTab(tabLayout.newTab().setText("插图").setIcon(R.drawable.ic_illustration));
     }
     
-    /**
-     * 初始化视图
-     */
-    private void initView() {
-        Intent intent = getIntent();
-        int source = intent.getIntExtra(Config.KEY_FROM_READ, 0);
-        // 查看保存记录
-        if (source == Config.TYPE_HAND_PAINT) {
-            String filePath = intent.getStringExtra(MainActivity.KEY_NOTE_PICTURES);
-            mDrawView.setBuffer(filePath);
-            // 将工具栏隐藏
-            llBottomToolBar.setVisibility(View.GONE);
-            tabLayout.setVisibility(View.GONE);
-            ivSave.setVisibility(View.GONE);
-            mDrawView.setCallback(null);
-            mDrawView.setMode(DrawView.MODE.NULL);
-        } else {
-            // 设置画布的回调接口
-            mDrawView.setCallback(this);
-        }
-    }
     
     /**
      * 初始化数据
      */
     private void initData() {
+        mDrawView.setCallback(this);
         ivClear.setOnClickListener(this);
         ivRedo.setOnClickListener(this);
         ivUndo.setOnClickListener(this);
@@ -304,19 +290,23 @@ public class HandPaintNoteActivity extends AppCompatActivity
                 save();
                 break;
             case R.id.iv_back:
-                DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
-                dialog.setTitle("提示")
-                        .setMessage("退出后不会保存已绘制内容，确认退出？")
-                        .setOnNegativeClickListener("继续画", v1 -> dialog.dismiss())
-                        .setOnPositiveClickedListener("退出", v12 -> {
-                            dialog.dismiss();
-                            finish();
-                        })
-                        .show();
+                back();
                 break;
             default:
                 break;
         }
+    }
+    
+    private void back() {
+        DiyCommonDialog dialog = new DiyCommonDialog(this, R.style.DiyDialogStyle);
+        dialog.setTitle("提示")
+                .setMessage("退出后不会保存已绘制内容，确认退出？")
+                .setOnNegativeClickListener("继续画", v1 -> dialog.dismiss())
+                .setOnPositiveClickedListener("退出", v12 -> {
+                    dialog.dismiss();
+                    finish();
+                })
+                .show();
     }
     
     private String imagePath;
@@ -414,7 +404,8 @@ public class HandPaintNoteActivity extends AppCompatActivity
         if (handPaintNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-                realmNote.setKey(Config.TYPE_HAND_PAINT);
+                realmNote.setKind(Config.TYPE_HAND_PAINT);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.getPictureIds().add(imagePath);
@@ -441,7 +432,8 @@ public class HandPaintNoteActivity extends AppCompatActivity
         if (handPaintNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmNote realmNote = realm.createObject(RealmNote.class);
-                realmNote.setKey(Config.TYPE_HAND_PAINT);
+                realmNote.setKind(Config.TYPE_HAND_PAINT);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.getPictureIds().add(imagePath);
@@ -467,11 +459,13 @@ public class HandPaintNoteActivity extends AppCompatActivity
             llBottomToolBar.setVisibility(View.GONE);
             tabLayout.setVisibility(View.GONE);
             ivSave.setVisibility(View.GONE);
+            ivBack.setVisibility(View.GONE);
         } else {
             // 显示工具栏
             llBottomToolBar.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
             ivSave.setVisibility(View.VISIBLE);
+            ivBack.setVisibility(View.VISIBLE);
         }
     }
     
@@ -507,6 +501,11 @@ public class HandPaintNoteActivity extends AppCompatActivity
                     break;
             }
         }
+    }
+    
+    @Override
+    public void onBackPressed() {
+        back();
     }
     
 }

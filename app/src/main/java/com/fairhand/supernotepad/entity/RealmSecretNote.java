@@ -10,7 +10,9 @@ import io.realm.annotations.Required;
  */
 public class RealmSecretNote extends RealmObject {
     
-    private int key;
+    private int kind;
+    
+    private String key;
     
     /**
      * 记事标题<br/>
@@ -48,6 +50,14 @@ public class RealmSecretNote extends RealmObject {
      */
     private String videoPath;
     
+    public String getKey() {
+        return key;
+    }
+    
+    public void setKey(String key) {
+        this.key = key;
+    }
+    
     public String getVideoPath() {
         return videoPath;
     }
@@ -80,12 +90,12 @@ public class RealmSecretNote extends RealmObject {
         this.noteContent = noteContent;
     }
     
-    public int getKey() {
-        return key;
+    public int getKind() {
+        return kind;
     }
     
-    public void setKey(int key) {
-        this.key = key;
+    public void setKind(int kind) {
+        this.kind = kind;
     }
     
     public String getNoteTime() {

@@ -465,7 +465,8 @@ public class PhotoAffixNoteActivity extends AppCompatActivity
     private void saveSecret(String imagePath) {
         mRealm.executeTransaction(realm -> {
             RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-            realmNote.setKey(Config.TYPE_PUZZLE);
+            realmNote.setKind(Config.TYPE_AFFIX);
+            realmNote.setKey(String.valueOf(UUID.randomUUID()));
             realmNote.setNoteTitle(content);
             realmNote.setNoteTime(TimeUtil.getFormatTime());
             realmNote.getPictureIds().add(imagePath);
@@ -481,7 +482,8 @@ public class PhotoAffixNoteActivity extends AppCompatActivity
     private void saveDefault(String imagePath) {
         mRealm.executeTransaction(realm -> {
             RealmNote realmNote = realm.createObject(RealmNote.class);
-            realmNote.setKey(Config.TYPE_PUZZLE);
+            realmNote.setKind(Config.TYPE_AFFIX);
+            realmNote.setKey(String.valueOf(UUID.randomUUID()));
             realmNote.setNoteTitle(content);
             realmNote.setNoteTime(TimeUtil.getFormatTime());
             realmNote.getPictureIds().add(imagePath);

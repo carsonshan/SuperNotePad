@@ -1,6 +1,5 @@
 package com.fairhand.supernotepad.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,6 +13,8 @@ import com.fairhand.supernotepad.entity.RealmNote;
 import com.fairhand.supernotepad.entity.RealmSecretNote;
 import com.fairhand.supernotepad.util.TimeUtil;
 import com.fairhand.supernotepad.util.Toaster;
+
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,8 +48,6 @@ public class CommonNoteActivity extends AppCompatActivity {
         // 获取Realm实例
         mRealm = Realm.getDefaultInstance();
         
-        initData();
-        
         ivSave.setOnClickListener(v -> save());
         ivBack.setOnClickListener(v -> finish());
     }
@@ -58,27 +57,6 @@ public class CommonNoteActivity extends AppCompatActivity {
         // 关闭Realm
         mRealm.close();
         super.onDestroy();
-    }
-    
-    /**
-     * 初始化数据
-     */
-    private void initData() {
-        Intent intent = getIntent();
-        int type = intent.getIntExtra(Config.KEY_FROM_READ, 0);
-        if (type == 1) {
-            // 当type=1时说明是查看保存的记录，获取值
-            String title = intent.getStringExtra(MainActivity.KEY_NOTE_TITLE);
-            String content = intent.getStringExtra(MainActivity.KEY_NOTE_CONTENT);
-            if (title != null) {
-                etTitle.setText(title);
-                etTitle.setSelection(title.length());
-            }
-            if (content != null) {
-                etContent.setText(content);
-                etContent.setSelection(content.length());
-            }
-        }
     }
     
     /**
@@ -119,7 +97,8 @@ public class CommonNoteActivity extends AppCompatActivity {
         if (realmNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-                realmNote.setKey(Config.TYPE_COMMON);
+                realmNote.setKind(Config.TYPE_COMMON);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(title);
                 realmNote.setNoteContent(content);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
@@ -143,7 +122,8 @@ public class CommonNoteActivity extends AppCompatActivity {
         if (realmNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmNote realmNote = realm.createObject(RealmNote.class);
-                realmNote.setKey(Config.TYPE_COMMON);
+                realmNote.setKind(Config.TYPE_COMMON);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(title);
                 realmNote.setNoteContent(content);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());

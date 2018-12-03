@@ -6,6 +6,7 @@ import com.fairhand.supernotepad.entity.RealmSecretNote;
 import com.fairhand.supernotepad.util.TimeUtil;
 
 import java.io.File;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -50,7 +51,8 @@ public class RecordModelImpl implements IRecordModel {
         if (recordingNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-                realmNote.setKey(Config.TYPE_RECORDING);
+                realmNote.setKind(Config.TYPE_RECORDING);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.setRecordingPath(filePath);
@@ -73,7 +75,8 @@ public class RecordModelImpl implements IRecordModel {
         if (recordingNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmNote realmNote = realm.createObject(RealmNote.class);
-                realmNote.setKey(Config.TYPE_RECORDING);
+                realmNote.setKind(Config.TYPE_RECORDING);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(noteTitle);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
                 realmNote.setRecordingPath(filePath);

@@ -31,6 +31,7 @@ import com.luck.picture.lib.tools.PictureFileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,26 +97,6 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
         mPictureAdapter = new PictureAdapter(this);
         // 设置GridView的适配器
         gridViewImage.setAdapter(mPictureAdapter);
-        
-        Intent intent = getIntent();
-        int type = intent.getIntExtra(Config.KEY_FROM_READ, 0);
-        if (type == 1) {
-            // 当type=1时说明是查看保存的记录，获取值
-            String title = intent.getStringExtra(MainActivity.KEY_NOTE_TITLE);
-            String content = intent.getStringExtra(MainActivity.KEY_NOTE_CONTENT);
-            mData = intent.getStringArrayListExtra(MainActivity.KEY_NOTE_PICTURES);
-            if (title != null) {
-                etTitle.setText(title);
-                etTitle.setSelection(title.length());
-            }
-            if (content != null) {
-                etContent.setText(content);
-                etContent.setSelection(content.length());
-            }
-            if (mData != null) {
-                mPictureAdapter.updateData(mData);
-            }
-        }
     }
     
     @Override
@@ -190,7 +171,8 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
         if (pictureNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmSecretNote realmNote = realm.createObject(RealmSecretNote.class);
-                realmNote.setKey(Config.TYPE_PICTURE);
+                realmNote.setKind(Config.TYPE_PICTURE);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(title);
                 realmNote.setNoteContent(content);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());
@@ -219,7 +201,8 @@ public class PictureNoteActivity extends AppCompatActivity implements View.OnCli
         if (pictureNotes.size() == 0) {
             mRealm.executeTransaction(realm -> {
                 RealmNote realmNote = realm.createObject(RealmNote.class);
-                realmNote.setKey(Config.TYPE_PICTURE);
+                realmNote.setKind(Config.TYPE_PICTURE);
+                realmNote.setKey(String.valueOf(UUID.randomUUID()));
                 realmNote.setNoteTitle(title);
                 realmNote.setNoteContent(content);
                 realmNote.setNoteTime(TimeUtil.getFormatTime());

@@ -11,10 +11,9 @@
         android:id="@+id/tv_content_show"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_margin="12dp"
         android:fitsSystemWindows="true"
+        android:gravity="center"
         android:maxLines="3"
         android:textColor="@color/colorSpecialBlack"
         android:textSize="18sp"
@@ -22,7 +21,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="记事文本记事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文事文本记事文本记事文本" />
+        tools:text="文本记事文事文本记事文本记事文本" />
 
     <ImageView
         android:id="@+id/iv_photo_show"

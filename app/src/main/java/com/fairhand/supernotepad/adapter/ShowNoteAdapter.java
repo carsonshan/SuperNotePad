@@ -77,7 +77,7 @@ public class ShowNoteAdapter extends BaseAdapter {
         
         // 获取记事的类型
         Note note = data.get(position);
-        int key = note.getKey();
+        int key = note.getKind();
         // 加载数据
         Glide.with(mContext)
                 .load(key == Config.TYPE_COMMON || key == Config.TYPE_RECORDING ?
